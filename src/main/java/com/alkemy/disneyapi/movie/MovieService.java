@@ -3,6 +3,7 @@ package com.alkemy.disneyapi.movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,13 +26,29 @@ public class MovieService {
 
     }
 
+    public List<Movie> findAllOrderByCreationDate(String order) {
+
+        if(order.equalsIgnoreCase("ASC")) {
+
+            return movieRepository.findAllByOrderByCreationDateAsc();
+
+        } else if (order.equalsIgnoreCase("DESC")) {
+
+            return movieRepository.findAllByOrderByCreationDateDesc();
+
+        }
+
+        return null;
+
+    }
+
     public Optional<Movie> findById(Long movieId) {
 
         return movieRepository.findById(movieId);
 
     }
 
-    public Set<Movie> findByTitle(String title) {
+    public List<Movie> findByTitle(String title) {
 
         return movieRepository.findByTitle(title);
 
@@ -49,9 +66,9 @@ public class MovieService {
 
     }
 
-    public Set<Movie> getByGenreId(Long idGenre) {
+    public List<Movie> getByGenreId(Long idGenre) {
 
-        return movieRepository.findAll().stream().filter(x -> haveGenre(x, idGenre)).collect(Collectors.toSet());
+        return movieRepository.findAll().stream().filter(x -> haveGenre(x, idGenre)).collect(Collectors.toList());
 
     }
 

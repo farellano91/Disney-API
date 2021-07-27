@@ -2,10 +2,10 @@ package com.alkemy.disneyapi.movie;
 
 import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.genre.Genre;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,11 +22,11 @@ public class Movie {
 
     private String image;
 
-    private String creationDate;
+    @Temporal(TemporalType.DATE)
+    private Date creationDate;
 
     private Integer rating;
 
-    @JsonBackReference
     @ManyToMany(mappedBy = "movies")
     private Set<Character> characters = new HashSet<Character>();
 

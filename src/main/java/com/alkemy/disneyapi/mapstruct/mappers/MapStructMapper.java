@@ -24,9 +24,9 @@ public interface MapStructMapper {
 
     MovieDto movieToMovieDto(Movie movie);
 
-    Set<MovieSlimDto> moviesToMovieSlimDtos(List<Movie> movies);
+    List<MovieSlimDto> moviesToMovieSlimDtos(List<Movie> movies);
 
-    Set<MovieDto> moviesToMovieDtos(Set<Movie> movies);
+    List<MovieDto> moviesToMovieDtos(List<Movie> movies);
 
     Movie moviePostDtoToMovie(MoviePostDto movie);
 

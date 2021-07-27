@@ -28,7 +28,7 @@ public class MovieController {
     }
 
     @GetMapping()
-    public ResponseEntity<Set<MovieSlimDto>> getAll() {
+    public ResponseEntity<List<MovieSlimDto>> getAll() {
 
         List<Movie> movies = movieService.getAll();
 
@@ -39,6 +39,30 @@ public class MovieController {
         } else {
 
             return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(movies), HttpStatus.OK);
+
+        }
+
+    }
+
+    //GET MOVIES ORDER BY CREATION_DATE
+    @GetMapping(params="order")
+    public ResponseEntity<List<MovieDto>> getByGenreId(@RequestParam("order") String order) {
+
+        List<Movie> movies = movieService.findAllOrderByCreationDate(order);
+
+        if(movies == null) {
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
+
+        if(movies.isEmpty()){
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        } else {
+
+            return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movies), HttpStatus.OK);
 
         }
 
@@ -56,9 +80,9 @@ public class MovieController {
 
     //GET MOVIES BY TITLE
     @GetMapping(params="title")
-    public ResponseEntity<Set<MovieDto>> findByTitle(@RequestParam("title") String title) {
+    public ResponseEntity<List<MovieDto>> findByTitle(@RequestParam("title") String title) {
 
-        Set<Movie> movies = movieService.findByTitle(title);
+        List<Movie> movies = movieService.findByTitle(title);
 
         if(movies.isEmpty()){
 
@@ -74,9 +98,9 @@ public class MovieController {
 
     //GET MOVIES BY GENRE
     @GetMapping(params="genre")
-    public ResponseEntity<Set<MovieDto>> getByGenreId(@RequestParam("genre") Long genreId) {
+    public ResponseEntity<List<MovieDto>> getByGenreId(@RequestParam("genre") Long genreId) {
 
-        Set<Movie> movies = movieService.getByGenreId(genreId);
+        List<Movie> movies = movieService.getByGenreId(genreId);
 
         if(movies.isEmpty()){
 

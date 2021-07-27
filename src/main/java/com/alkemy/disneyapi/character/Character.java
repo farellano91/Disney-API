@@ -27,7 +27,7 @@ public class Character {
 
     private String history;
 
-    @JsonManagedReference
+    //@JsonManagedReference
     @JoinTable(name = "Character_Movie",
             joinColumns = @JoinColumn(name = "Character_id"),
             inverseJoinColumns = @JoinColumn(name = "Movie_id"))
