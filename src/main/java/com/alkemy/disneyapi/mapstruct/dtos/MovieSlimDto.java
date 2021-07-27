@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MovieSlimDto {
+
     private Long id;
     private String image;
     private String title;

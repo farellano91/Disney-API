@@ -1,10 +1,8 @@
 package com.alkemy.disneyapi.mapstruct.dtos;
 
-import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.genre.Genre;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Set;
 
 @Getter

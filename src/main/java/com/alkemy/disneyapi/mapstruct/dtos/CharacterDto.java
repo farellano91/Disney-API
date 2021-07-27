@@ -3,7 +3,6 @@ package com.alkemy.disneyapi.mapstruct.dtos;
 import com.alkemy.disneyapi.movie.Movie;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Set;
 
 @Setter

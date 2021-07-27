@@ -5,7 +5,6 @@ import com.alkemy.disneyapi.genre.Genre;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,4 +35,5 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "Genre_id"))
     @ManyToMany
     private Set<Genre> genres = new HashSet<Genre>();
+
 }

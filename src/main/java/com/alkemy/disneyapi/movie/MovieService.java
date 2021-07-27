@@ -1,10 +1,7 @@
 package com.alkemy.disneyapi.movie;
 
-import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
-import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

@@ -1,10 +1,9 @@
-package com.alkemy.disneyapi.mapstruct.dtos.mappers;
+package com.alkemy.disneyapi.mapstruct.mappers;
 
 import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.mapstruct.dtos.*;
 import com.alkemy.disneyapi.movie.Movie;
 import org.mapstruct.Mapper;
-
 import java.util.List;
 import java.util.Set;
 

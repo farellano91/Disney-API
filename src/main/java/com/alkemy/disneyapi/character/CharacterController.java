@@ -3,12 +3,11 @@ package com.alkemy.disneyapi.character;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterPostDto;
-import com.alkemy.disneyapi.mapstruct.dtos.mappers.MapStructMapper;
+import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,8 +21,10 @@ public class CharacterController {
 
     @Autowired
     public CharacterController(MapStructMapper mapStructMapper, CharacterService characterService) {
+
         this.mapStructMapper = mapStructMapper;
         this.characterService = characterService;
+
     }
 
     //GETS ALL CHARACTERS DTO'S
@@ -41,6 +42,7 @@ public class CharacterController {
              return new ResponseEntity<>(mapStructMapper.charactersToCharacterSlimDtos(characters), HttpStatus.OK);
 
          }
+
     }
 
     @GetMapping("/{id}/details")
@@ -67,6 +69,7 @@ public class CharacterController {
             return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characters), HttpStatus.OK);
 
         }
+
     }
 
     //GET CHARACTERS BY AGE
@@ -119,6 +122,7 @@ public class CharacterController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
+
     }
 
     //SAVES A CHARACTER

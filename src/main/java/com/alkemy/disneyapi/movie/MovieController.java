@@ -3,12 +3,11 @@ package com.alkemy.disneyapi.movie;
 import com.alkemy.disneyapi.mapstruct.dtos.MovieDto;
 import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
 import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
-import com.alkemy.disneyapi.mapstruct.dtos.mappers.MapStructMapper;
+import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,8 +21,10 @@ public class MovieController {
 
     @Autowired
     public MovieController(MapStructMapper mapStructMapper, MovieService movieService) {
+
         this.mapStructMapper = mapStructMapper;
         this.movieService = movieService;
+
     }
 
     @GetMapping()
@@ -40,6 +41,7 @@ public class MovieController {
             return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(movies), HttpStatus.OK);
 
         }
+
     }
 
     //GET MOVIE BY ID
@@ -67,6 +69,7 @@ public class MovieController {
             return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movies), HttpStatus.OK);
 
         }
+
     }
 
     //GET MOVIES BY GENRE
@@ -101,6 +104,7 @@ public class MovieController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
+
     }
 
     //SAVES A MOVIE
@@ -140,4 +144,5 @@ public class MovieController {
         }
 
     }
+
 }
