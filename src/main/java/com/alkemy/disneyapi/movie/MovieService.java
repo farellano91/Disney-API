@@ -1,9 +1,11 @@
 package com.alkemy.disneyapi.movie;
 
-import com.alkemy.disneyapi.dtos.MovieGetLiteDto;
-import com.alkemy.disneyapi.dtos.MoviePostDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,9 +22,9 @@ public class MovieService {
 
     }
 
-    public Set<MovieGetLiteDto> getAll() {
+    public List<Movie> getAll() {
 
-        return movieRepository.findAll().stream().map(MovieGetLiteDto::new).collect(Collectors.toSet());
+        return movieRepository.findAll();
 
     }
 
@@ -59,17 +61,6 @@ public class MovieService {
     private boolean haveGenre(Movie movie, Long idGenre) {
 
         return movie.getGenres().stream().anyMatch(g -> g.getId().equals(idGenre));
-
-    }
-
-    public Movie update(MoviePostDto movie, Movie movieToUpdate) {
-
-        movieToUpdate.setTitle(movie.getTitle());
-        movieToUpdate.setImage(movie.getImage());
-        movieToUpdate.setCreationDate(movie.getCreationDate());
-        movieToUpdate.setRating(movie.getRating());
-
-        return movieRepository.save(movieToUpdate);
 
     }
 

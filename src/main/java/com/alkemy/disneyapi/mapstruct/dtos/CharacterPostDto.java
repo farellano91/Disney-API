@@ -1,4 +1,4 @@
-package com.alkemy.disneyapi.dtos;
+package com.alkemy.disneyapi.mapstruct.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +16,6 @@ public class CharacterPostDto {
     private Float weight;
 
     private String history;
+
 }
 

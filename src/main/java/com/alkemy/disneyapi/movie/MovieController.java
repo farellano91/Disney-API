@@ -1,12 +1,15 @@
 package com.alkemy.disneyapi.movie;
 
-import com.alkemy.disneyapi.dtos.MovieGetFullDto;
-import com.alkemy.disneyapi.dtos.MovieGetLiteDto;
-import com.alkemy.disneyapi.dtos.MoviePostDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MovieDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
+import com.alkemy.disneyapi.mapstruct.dtos.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,17 +17,19 @@ import java.util.Set;
 @RequestMapping("/movies")
 public class MovieController {
 
+    private final MapStructMapper mapStructMapper;
     private MovieService movieService;
 
     @Autowired
-    public MovieController(MovieService movieService) {
+    public MovieController(MapStructMapper mapStructMapper, MovieService movieService) {
+        this.mapStructMapper = mapStructMapper;
         this.movieService = movieService;
     }
 
     @GetMapping()
-    public ResponseEntity<Set<MovieGetLiteDto>> getAll() {
+    public ResponseEntity<Set<MovieSlimDto>> getAll() {
 
-        Set<MovieGetLiteDto> movies = movieService.getAll();
+        List<Movie> movies = movieService.getAll();
 
         if(movies.isEmpty()){
 
@@ -32,24 +37,24 @@ public class MovieController {
 
         } else {
 
-            return new ResponseEntity<>(movies, HttpStatus.OK);
+            return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(movies), HttpStatus.OK);
 
         }
     }
 
     //GET MOVIE BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<MovieGetFullDto> findById(@PathVariable("id") Long movieId) {
+    public ResponseEntity<MovieDto> findById(@PathVariable("id") Long movieId) {
 
         Optional<Movie> movie = movieService.findById(movieId);
 
-        return movie.map(value -> new ResponseEntity<>(new MovieGetFullDto(value), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return movie.map(value -> new ResponseEntity<>(mapStructMapper.movieToMovieDto(value), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
     //GET MOVIES BY TITLE
     @GetMapping(params="title")
-    public ResponseEntity<Set<Movie>> findByTitle(@RequestParam("title") String title) {
+    public ResponseEntity<Set<MovieDto>> findByTitle(@RequestParam("title") String title) {
 
         Set<Movie> movies = movieService.findByTitle(title);
 
@@ -59,14 +64,14 @@ public class MovieController {
 
         } else {
 
-            return new ResponseEntity<>(movies, HttpStatus.OK);
+            return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movies), HttpStatus.OK);
 
         }
     }
 
     //GET MOVIES BY GENRE
     @GetMapping(params="genre")
-    public ResponseEntity<Set<Movie>> getByGenreId(@RequestParam("genre") Long genreId) {
+    public ResponseEntity<Set<MovieDto>> getByGenreId(@RequestParam("genre") Long genreId) {
 
         Set<Movie> movies = movieService.getByGenreId(genreId);
 
@@ -76,7 +81,7 @@ public class MovieController {
 
         } else {
 
-            return new ResponseEntity<>(movies, HttpStatus.OK);
+            return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movies), HttpStatus.OK);
 
         }
 
@@ -100,12 +105,12 @@ public class MovieController {
 
     //SAVES A MOVIE
     @PostMapping()
-    public ResponseEntity<Movie> save(@RequestBody Movie movie) {
+    public ResponseEntity<MovieDto> save(@RequestBody MoviePostDto movie) {
 
         try {
 
-            Movie movieCreated = movieService.save(movie);
-            return new ResponseEntity<>(movieCreated, HttpStatus.CREATED);
+            Movie movieCreated = movieService.save(mapStructMapper.moviePostDtoToMovie(movie));
+            return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieCreated), HttpStatus.CREATED);
 
         } catch (Exception e) {
 
@@ -117,14 +122,16 @@ public class MovieController {
 
     //UPDATE A MOVIE
     @PatchMapping("/{id}")
-    public ResponseEntity<Movie> update(@RequestBody MoviePostDto movie, @PathVariable("id") Long id){
+    public ResponseEntity<MovieDto> update(@RequestBody MoviePostDto movie, @PathVariable("id") Long id){
 
         Optional<Movie> movieToUpdate = movieService.findById(id);
 
         if (movieToUpdate.isPresent()) {
 
-            Movie movieUpdated = movieService.update(movie, movieToUpdate.get());
-            return new ResponseEntity<>(movieUpdated, HttpStatus.OK);
+            Movie movieToBeUpdated = mapStructMapper.moviePostDtoToMovie(movie);
+            movieToBeUpdated.setId(id);
+            Movie movieUpdated = movieService.save(movieToBeUpdated);
+            return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieUpdated), HttpStatus.OK);
 
         } else {
 

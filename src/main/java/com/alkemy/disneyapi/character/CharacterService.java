@@ -1,9 +1,9 @@
 package com.alkemy.disneyapi.character;
 
-import com.alkemy.disneyapi.dtos.CharacterGetLiteDto;
-import com.alkemy.disneyapi.dtos.CharacterPostDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,9 +20,9 @@ public class CharacterService {
 
     }
 
-    public Set<CharacterGetLiteDto> getAll() {
+    public List<Character> getAll() {
 
-        return characterRepository.findAll().stream().map(CharacterGetLiteDto::new).collect(Collectors.toSet());
+        return characterRepository.findAll();
 
     }
 
@@ -63,18 +63,6 @@ public class CharacterService {
     private boolean isInMovie(Character character, Long idMovie) {
 
         return character.getMovies().stream().anyMatch(m -> m.getId().equals(idMovie));
-
-    }
-
-    public Character update(CharacterPostDto character, Character characterToUpdate) {
-
-        characterToUpdate.setName(character.getName());
-        characterToUpdate.setImage(character.getImage());
-        characterToUpdate.setAge(character.getAge());
-        characterToUpdate.setWeight(character.getWeight());
-        characterToUpdate.setHistory(character.getHistory());
-
-        return characterRepository.save(characterToUpdate);
 
     }
 

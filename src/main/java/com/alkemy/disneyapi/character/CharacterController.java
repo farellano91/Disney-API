@@ -1,11 +1,15 @@
 package com.alkemy.disneyapi.character;
 
-import com.alkemy.disneyapi.dtos.CharacterGetLiteDto;
-import com.alkemy.disneyapi.dtos.CharacterPostDto;
+import com.alkemy.disneyapi.mapstruct.dtos.CharacterDto;
+import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
+import com.alkemy.disneyapi.mapstruct.dtos.CharacterPostDto;
+import com.alkemy.disneyapi.mapstruct.dtos.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,18 +17,20 @@ import java.util.Set;
 @RequestMapping("/characters")
 public class CharacterController {
 
+    private final MapStructMapper mapStructMapper;
     private final CharacterService characterService;
 
     @Autowired
-    public CharacterController(CharacterService characterService) {
+    public CharacterController(MapStructMapper mapStructMapper, CharacterService characterService) {
+        this.mapStructMapper = mapStructMapper;
         this.characterService = characterService;
     }
 
     //GETS ALL CHARACTERS DTO'S
     @GetMapping()
-    public ResponseEntity<Set<CharacterGetLiteDto>> getAll() {
+    public ResponseEntity<Set<CharacterSlimDto>> getAll() {
 
-         Set<CharacterGetLiteDto> characters = characterService.getAll();
+         List<Character> characters = characterService.getAll();
 
          if(characters.isEmpty()){
 
@@ -32,23 +38,23 @@ public class CharacterController {
 
          } else {
 
-             return new ResponseEntity<>(characters, HttpStatus.OK);
+             return new ResponseEntity<>(mapStructMapper.charactersToCharacterSlimDtos(characters), HttpStatus.OK);
 
          }
     }
 
     @GetMapping("/{id}/details")
-    public ResponseEntity<Character> getCharacterDetails(@PathVariable("id") Long id) {
+    public ResponseEntity<CharacterDto> getCharacterDetails(@PathVariable("id") Long id) {
 
         Optional<Character> character = characterService.findById(id);
 
-        return character.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return character.map(value -> new ResponseEntity<>(mapStructMapper.characterToCharacterDto(value), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
     //GET CHARACTERS BY NAME
     @GetMapping(params="name")
-    public ResponseEntity<Set<Character>> findByName(@RequestParam("name") String name) {
+    public ResponseEntity<Set<CharacterDto>> findByName(@RequestParam("name") String name) {
 
         Set<Character> characters = characterService.findByName(name);
 
@@ -58,14 +64,14 @@ public class CharacterController {
 
         } else {
 
-            return new ResponseEntity<>(characters, HttpStatus.OK);
+            return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characters), HttpStatus.OK);
 
         }
     }
 
     //GET CHARACTERS BY AGE
     @GetMapping(params="age")
-    public ResponseEntity<Set<Character>> findByAge(@RequestParam("age") Integer age) {
+    public ResponseEntity<Set<CharacterDto>> findByAge(@RequestParam("age") Integer age) {
 
         Set<Character> characters = characterService.findByAge(age);
 
@@ -75,7 +81,7 @@ public class CharacterController {
 
         } else {
 
-            return new ResponseEntity<>(characters, HttpStatus.OK);
+            return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characters), HttpStatus.OK);
 
         }
 
@@ -83,7 +89,7 @@ public class CharacterController {
 
     //GET CHARACTERS BY MOVIE
     @GetMapping(params="movie")
-    public ResponseEntity<Set<Character>> getByMovieId(@RequestParam("movie") Long movieId) {
+    public ResponseEntity<Set<CharacterDto>> getByMovieId(@RequestParam("movie") Long movieId) {
 
         Set<Character> characters = characterService.getByMovieId(movieId);
 
@@ -93,7 +99,7 @@ public class CharacterController {
 
         } else {
 
-            return new ResponseEntity<>(characters, HttpStatus.OK);
+            return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characters), HttpStatus.OK);
 
         }
 
@@ -117,12 +123,12 @@ public class CharacterController {
 
     //SAVES A CHARACTER
     @PostMapping()
-    public ResponseEntity<Character> save(@RequestBody Character character) {
+    public ResponseEntity<CharacterDto> save(@RequestBody CharacterPostDto character) {
 
         try {
 
-            Character characterCreated = characterService.save(character);
-            return new ResponseEntity<>(characterCreated, HttpStatus.CREATED);
+            Character characterCreated = characterService.save(mapStructMapper.characterPostDtoToCharacter(character));
+            return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterCreated), HttpStatus.CREATED);
 
         } catch (Exception e) {
 
@@ -134,14 +140,16 @@ public class CharacterController {
 
     //UPDATE A CHARACTER
     @PatchMapping("/{id}")
-    public ResponseEntity<Character> update(@RequestBody CharacterPostDto character, @PathVariable("id") Long id) {
+    public ResponseEntity<CharacterDto> update(@RequestBody CharacterPostDto character, @PathVariable("id") Long id) {
 
         Optional<Character> characterToUpdate = characterService.findById(id);
 
         if (characterToUpdate.isPresent()) {
 
-            Character characterUpdated = characterService.update(character, characterToUpdate.get());
-            return new ResponseEntity<>(characterUpdated, HttpStatus.OK);
+            Character characterToBeUpdated = mapStructMapper.characterPostDtoToCharacter(character);
+            characterToBeUpdated.setId(id);
+            Character characterUpdated = characterService.save(characterToBeUpdated);
+            return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterUpdated), HttpStatus.OK);
 
         } else {
 
