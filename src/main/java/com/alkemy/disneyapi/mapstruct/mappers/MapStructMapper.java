@@ -4,8 +4,8 @@ import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.mapstruct.dtos.*;
 import com.alkemy.disneyapi.movie.Movie;
 import org.mapstruct.Mapper;
+
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface MapStructMapper {
@@ -14,9 +14,9 @@ public interface MapStructMapper {
 
     CharacterDto characterToCharacterDto(Character character);
 
-    Set<CharacterSlimDto> charactersToCharacterSlimDtos(List<Character> characters);
+    List<CharacterSlimDto> charactersToCharacterSlimDtos(List<Character> characters);
 
-    Set<CharacterDto> charactersToCharacterDtos(Set<Character> characters);
+    List<CharacterDto> charactersToCharacterDtos(List<Character> characters);
 
     Character characterPostDtoToCharacter(CharacterPostDto character);
 

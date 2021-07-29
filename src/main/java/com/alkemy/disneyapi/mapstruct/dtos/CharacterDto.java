@@ -1,8 +1,8 @@
 package com.alkemy.disneyapi.mapstruct.dtos;
 
-import com.alkemy.disneyapi.movie.Movie;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.Set;
 
 @Setter
@@ -21,6 +21,6 @@ public class CharacterDto {
 
     private String history;
 
-    private Set<Movie> movies;
+    private Set<MovieSlimDto> movies;
 
 }

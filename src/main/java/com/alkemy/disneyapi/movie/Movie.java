@@ -4,6 +4,7 @@ import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.genre.Genre;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -28,12 +29,12 @@ public class Movie {
     private Integer rating;
 
     @ManyToMany(mappedBy = "movies")
-    private Set<Character> characters = new HashSet<Character>();
+    private Set<Character> characters = new HashSet<>();
 
     @JoinTable(name = "Movie_Genre",
             joinColumns = @JoinColumn(name = "Movie_id"),
             inverseJoinColumns = @JoinColumn(name = "Genre_id"))
     @ManyToMany
-    private Set<Genre> genres = new HashSet<Genre>();
+    private Set<Genre> genres = new HashSet<>();
 
 }

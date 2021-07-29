@@ -1,23 +1,25 @@
 package com.alkemy.disneyapi.movie;
 
+import com.alkemy.disneyapi.exception.ResourceNotFoundException;
 import com.alkemy.disneyapi.mapstruct.dtos.MovieDto;
-import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
 import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
 
     private final MapStructMapper mapStructMapper;
-    private MovieService movieService;
+    private final MovieService movieService;
 
     @Autowired
     public MovieController(MapStructMapper mapStructMapper, MovieService movieService) {
@@ -27,6 +29,7 @@ public class MovieController {
 
     }
 
+    //GETS ALL MOVIES DTO'S
     @GetMapping()
     public ResponseEntity<List<MovieSlimDto>> getAll() {
 
@@ -74,7 +77,9 @@ public class MovieController {
 
         Optional<Movie> movie = movieService.findById(movieId);
 
-        return movie.map(value -> new ResponseEntity<>(mapStructMapper.movieToMovieDto(value), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return movie.map(value -> new ResponseEntity<>
+                (mapStructMapper.movieToMovieDto(value), HttpStatus.OK))
+                .orElseThrow(() -> new ResourceNotFoundException("No Movie with ID : " + movieId));
 
     }
 
@@ -86,7 +91,7 @@ public class MovieController {
 
         if(movies.isEmpty()){
 
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            throw new ResourceNotFoundException("No Movies with Title : " + title);
 
         } else {
 
@@ -104,7 +109,7 @@ public class MovieController {
 
         if(movies.isEmpty()){
 
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            throw new ResourceNotFoundException("No Movies with GenreId : " + genreId);
 
         } else {
 
@@ -118,14 +123,16 @@ public class MovieController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteById(@PathVariable("id") Long id) {
 
-        try {
+        Optional<Movie> movie = movieService.findById(id);
+
+        if (movie.isPresent()) {
 
             movieService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
 
-        } catch (Exception e) {
+        } else {
 
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResourceNotFoundException("No Movie with ID : " + id);
 
         }
 
@@ -133,18 +140,10 @@ public class MovieController {
 
     //SAVES A MOVIE
     @PostMapping()
-    public ResponseEntity<MovieDto> save(@RequestBody MoviePostDto movie) {
+    public ResponseEntity<MovieDto> save(@Validated @RequestBody MoviePostDto movie) {
 
-        try {
-
-            Movie movieCreated = movieService.save(mapStructMapper.moviePostDtoToMovie(movie));
-            return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieCreated), HttpStatus.CREATED);
-
-        } catch (Exception e) {
-
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-
-        }
+        Movie movieCreated = movieService.save(mapStructMapper.moviePostDtoToMovie(movie));
+        return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieCreated), HttpStatus.CREATED);
 
     }
 
@@ -163,7 +162,7 @@ public class MovieController {
 
         } else {
 
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResourceNotFoundException("No Movie with ID : " + id);
 
         }
 

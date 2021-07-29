@@ -19,10 +19,10 @@ public class DisneyApiApplication {
 * 4 - CRUD de Personajes -------> OK
 * 5 - Detalle de Personaje -------> OK
 * 6 - Búsqueda de Personajes -------> OK
-* 7 - Listado de Peliculas -------> TODO
-* 8 - Detalle de Pelicula -------> TODO
+* 7 - Listado de Peliculas -------> OK
+* 8 - Detalle de Pelicula -------> OK
 * 9 - CRUD de Peliculas -------> OK
-* 10 - Búsqueda de Peliculas -------> TODO
+* 10 - Búsqueda de Peliculas -------> OK
 * 11 - Envío de mails -------> TODO
 * 12 - Documentación -------> TODO
 * 13 - Testing -------> TODO

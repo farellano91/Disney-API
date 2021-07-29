@@ -2,9 +2,9 @@ package com.alkemy.disneyapi.character;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,12 +30,12 @@ public class CharacterService {
         return characterRepository.findById(characterId);
 
     }
-    public Set<Character> findByName(String name) {
+    public List<Character> findByName(String name) {
 
         return characterRepository.findByName(name);
 
     }
-    public Set<Character> findByAge(Integer age) {
+    public List<Character> findByAge(Integer age) {
 
         return characterRepository.findByAge(age);
 
@@ -53,9 +53,9 @@ public class CharacterService {
 
     }
 
-    public Set<Character> getByMovieId(Long idMovie) {
+    public List<Character> getByMovieId(Long idMovie) {
 
-        return characterRepository.findAll().stream().filter(x -> isInMovie(x, idMovie)).collect(Collectors.toSet());
+        return characterRepository.findAll().stream().filter(x -> isInMovie(x, idMovie)).collect(Collectors.toList());
 
     }
 
