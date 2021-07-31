@@ -134,4 +134,15 @@ public class GlobalResponseException extends ResponseEntityExceptionHandler {
 
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> IllegalArgumentException(IllegalArgumentException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+        ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Illegal Argument", details);
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
+    }
+
 }

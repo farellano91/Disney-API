@@ -1,6 +1,7 @@
 package com.alkemy.disneyapi.character;
 
 import com.alkemy.disneyapi.exception.ResourceNotFoundException;
+import com.alkemy.disneyapi.mapstruct.dtos.CharacterMoviesDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterPostDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
@@ -10,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,12 +132,12 @@ public class CharacterController {
 
     }
 
-    //SAVES A CHARACTER
+    //SAVES A CHARACTER WITH NO MOVIES ASSIGNED
     @PostMapping()
-    public ResponseEntity<Object> save(@Validated @RequestBody CharacterPostDto character) {
+    public ResponseEntity<CharacterDto> save(@Validated @RequestBody CharacterPostDto character) {
 
-            Character characterCreated = characterService.save(mapStructMapper.characterPostDtoToCharacter(character));
-            return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterCreated), HttpStatus.CREATED);
+        Character characterCreated = characterService.save(mapStructMapper.characterPostDtoToCharacter(character));
+        return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterCreated), HttpStatus.CREATED);
 
     }
 
@@ -156,6 +157,76 @@ public class CharacterController {
         } else {
 
             throw new ResourceNotFoundException("No Character with ID : " + id);
+
+        }
+
+    }
+
+
+    @GetMapping("{id}/movies")
+    public ResponseEntity<?> getCharacterMovies(@PathVariable("id") Long characterId) {
+
+        Optional<Character> character = characterService.findById(characterId);
+
+        if (character.isPresent()) {
+
+            return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(new ArrayList<>(character.get().getMovies())), HttpStatus.OK);
+
+        } else {
+
+            throw new ResourceNotFoundException("No character with ID: " + characterId);
+
+        }
+
+    }
+
+    @PutMapping("{id}/movies")
+    public ResponseEntity<?> addMoviesToCharacter(@RequestBody CharacterMoviesDto moviesIds, @PathVariable("id") Long characterId) {
+
+        Optional<Character> character = characterService.findById(characterId);
+
+        if (character.isPresent()) {
+
+            if (characterService.checkMoviesExistence(moviesIds.getMovies())) {
+
+                characterService.addMovies(characterId, moviesIds.getMovies());
+                return new ResponseEntity<>(HttpStatus.OK);
+
+            } else {
+
+                throw new ResourceNotFoundException("Make sure all movies you want to add to the character already exist on the server");
+
+            }
+
+        } else {
+
+            throw new ResourceNotFoundException("No character with ID: " + characterId);
+
+        }
+
+    }
+
+    @DeleteMapping("{id}/movies")
+    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody CharacterMoviesDto moviesIds, @PathVariable("id") Long characterId) {
+
+        Optional<Character> character = characterService.findById(characterId);
+
+        if (character.isPresent()) {
+
+            if (characterService.checkMoviesExistence(moviesIds.getMovies())) {
+
+                characterService.removeMovies(characterId, moviesIds.getMovies());
+                return new ResponseEntity<>(HttpStatus.OK);
+
+            } else {
+
+                throw new ResourceNotFoundException("Make sure all movies you want to remove from the character already exist on the server");
+
+            }
+
+        } else {
+
+            throw new ResourceNotFoundException("No character with ID: " + characterId);
 
         }
 
