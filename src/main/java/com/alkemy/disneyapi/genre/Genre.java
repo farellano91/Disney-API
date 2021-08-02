@@ -3,7 +3,6 @@ package com.alkemy.disneyapi.genre;
 import com.alkemy.disneyapi.movie.Movie;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +21,6 @@ public class Genre {
     private String image;
 
     @ManyToMany(mappedBy = "genres")
-    private Set<Movie> movies = new HashSet<Movie>();
+    private Set<Movie> movies = new HashSet<>();
 
 }

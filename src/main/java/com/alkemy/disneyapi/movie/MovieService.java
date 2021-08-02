@@ -1,5 +1,7 @@
 package com.alkemy.disneyapi.movie;
 
+import com.alkemy.disneyapi.genre.Genre;
+import com.alkemy.disneyapi.genre.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +13,14 @@ import java.util.stream.Collectors;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final GenreRepository genreRepository;
 
     @Autowired
-    public MovieService(MovieRepository movieRepository) {
+    public MovieService(MovieRepository movieRepository, GenreRepository genreRepository) {
 
         this.movieRepository = movieRepository;
 
+        this.genreRepository = genreRepository;
     }
 
     public List<Movie> getAll() {
@@ -61,6 +65,7 @@ public class MovieService {
 
     public Movie save(Movie movie) {
 
+
         return movieRepository.save(movie);
 
     }
@@ -74,6 +79,32 @@ public class MovieService {
     private boolean haveGenre(Movie movie, Long idGenre) {
 
         return movie.getGenres().stream().anyMatch(g -> g.getId().equals(idGenre));
+
+    }
+
+    public boolean checkGenresExistence(List<Long> genresIds) {
+
+        return genreRepository.findAll().stream().map(Genre::getId).collect(Collectors.toList()).containsAll(genresIds);
+
+    }
+
+    public void addGenres(Long movieId, List<Long> genresIds) {
+
+        Movie movie = movieRepository.getById(movieId);
+
+        genreRepository.findAllById(genresIds).forEach(genre -> movie.getGenres().add(genre));
+
+        movieRepository.save(movie);
+
+    }
+
+    public void removeGenres(Long movieId, List<Long> genresIds) {
+
+        Movie movie = movieRepository.getById(movieId);
+
+        movie.getGenres().removeIf(genre -> genresIds.contains(genre.getId()));
+
+        movieRepository.save(movie);
 
     }
 

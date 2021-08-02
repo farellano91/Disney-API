@@ -89,7 +89,7 @@ public class CharacterService {
 
         Character character = characterRepository.getById(characterId);
 
-        movieRepository.findAllById(moviesIds).forEach(movie -> character.getMovies().remove(movie));
+        character.getMovies().removeIf(movie -> moviesIds.contains(movie.getId()));
 
         characterRepository.save(character);
 

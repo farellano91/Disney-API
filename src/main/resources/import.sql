@@ -1,3 +1,7 @@
+INSERT INTO GENRE (id, name, image ) VALUES (1, 'genre1', 'genre-url1' );
+INSERT INTO GENRE (id, name, image ) VALUES (2, 'genre2', 'genre-url2' );
+INSERT INTO GENRE (id, name, image ) VALUES (3, 'genre3', 'genre-url3' );
+INSERT INTO GENRE (id, name, image ) VALUES (4, 'genre4', 'genre-url4' );
 
 INSERT INTO CHARACTER (id, name , image, age, weight, history) VALUES (1, 'char1', 'image-url1', 20, 5.1, 'history1' );
 INSERT INTO CHARACTER  (id, name, image, age, weight, history) VALUES (2, 'char2', 'image-url2', 21, 5.2, 'history2' );
@@ -12,6 +16,13 @@ INSERT INTO MOVIE (id, title, image, creation_date, rating) VALUES (3, 'movie3',
 INSERT INTO MOVIE (id, title, image, creation_date, rating) VALUES (4, 'movie4', 'movie-url4', DATE '1993-12-08', 4 );
 INSERT INTO MOVIE (id, title, image, creation_date, rating) VALUES (5, 'movie5', 'movie-url5', DATE '1982-11-02', 5 );
 
+INSERT INTO MOVIE_GENRE (movie_id, genre_id) VALUES ( 1, 1 );
+INSERT INTO MOVIE_GENRE (movie_id, genre_id) VALUES ( 2, 2 );
+INSERT INTO MOVIE_GENRE (movie_id, genre_id) VALUES ( 3, 4 );
+INSERT INTO MOVIE_GENRE (movie_id, genre_id) VALUES ( 4, 3 );
+
 INSERT INTO CHARACTER_MOVIE (character_id, movie_id) VALUES ( 1, 1 );
 INSERT INTO CHARACTER_MOVIE (character_id, movie_id) VALUES ( 1, 2 );
 INSERT INTO CHARACTER_MOVIE (character_id, movie_id) VALUES ( 1, 3 );
+INSERT INTO CHARACTER_MOVIE (character_id, movie_id) VALUES ( 2, 1 );
+INSERT INTO CHARACTER_MOVIE (character_id, movie_id) VALUES ( 2, 4 );

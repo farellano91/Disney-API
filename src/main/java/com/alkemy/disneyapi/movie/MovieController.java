@@ -1,9 +1,8 @@
 package com.alkemy.disneyapi.movie;
 
+import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.exception.ResourceNotFoundException;
-import com.alkemy.disneyapi.mapstruct.dtos.MovieDto;
-import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
-import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
+import com.alkemy.disneyapi.mapstruct.dtos.*;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -149,7 +148,7 @@ public class MovieController {
 
     //UPDATE A MOVIE
     @PatchMapping("/{id}")
-    public ResponseEntity<MovieDto> update(@RequestBody MoviePostDto movie, @PathVariable("id") Long id){
+    public ResponseEntity<MovieDto> update(@Validated @RequestBody MoviePostDto movie, @PathVariable("id") Long id){
 
         Optional<Movie> movieToUpdate = movieService.findById(id);
 
@@ -163,6 +162,58 @@ public class MovieController {
         } else {
 
             throw new ResourceNotFoundException("No Movie with ID : " + id);
+
+        }
+
+    }
+
+    @PutMapping("{id}/genres")
+    public ResponseEntity<?> addGenresToMovie(@RequestBody MovieGenresDto genresIds, @PathVariable("id") Long movieId) {
+
+        Optional<Movie> movie = movieService.findById(movieId);
+
+        if (movie.isPresent()) {
+
+            if (movieService.checkGenresExistence(genresIds.getGenres())) {
+
+                movieService.addGenres(movieId, genresIds.getGenres());
+                return new ResponseEntity<>(HttpStatus.OK);
+
+            } else {
+
+                throw new ResourceNotFoundException("Make sure all genres you want to add to the movie already exist on the server");
+
+            }
+
+        } else {
+
+            throw new ResourceNotFoundException("No movie with ID: " + movieId);
+
+        }
+
+    }
+
+    @DeleteMapping("{id}/movies")
+    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody MovieGenresDto genresIds, @PathVariable("id") Long movieId) {
+
+        Optional<Movie> movie = movieService.findById(movieId);
+
+        if (movie.isPresent()) {
+
+            if (movieService.checkGenresExistence(genresIds.getGenres())) {
+
+                movieService.removeGenres(movieId, genresIds.getGenres());
+                return new ResponseEntity<>(HttpStatus.OK);
+
+            } else {
+
+                throw new ResourceNotFoundException("Make sure all genres you want to remove from the movie already exist on the server");
+
+            }
+
+        } else {
+
+            throw new ResourceNotFoundException("No movie with ID: " + movieId);
 
         }
 
