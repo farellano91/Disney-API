@@ -48,7 +48,7 @@ public class MovieController {
 
     //GET MOVIES ORDER BY CREATION_DATE
     @GetMapping(params="order")
-    public ResponseEntity<List<MovieDto>> getByGenreId(@RequestParam("order") String order) {
+    public ResponseEntity<List<MovieDto>> getAllMoviesOrderByCreationDate(@RequestParam("order") String order) {
 
         List<Movie> movies = movieService.findAllOrderByCreationDate(order);
 
@@ -102,7 +102,7 @@ public class MovieController {
 
     //GET MOVIES BY GENRE
     @GetMapping(params="genre")
-    public ResponseEntity<List<MovieDto>> getByGenreId(@RequestParam("genre") Long genreId) {
+    public ResponseEntity<List<MovieDto>> findByGenre(@RequestParam("genre") Long genreId) {
 
         List<Movie> movies = movieService.getByGenreId(genreId);
 
