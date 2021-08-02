@@ -3,7 +3,6 @@ package com.alkemy.disneyapi.movie;
 import com.alkemy.disneyapi.exception.ResourceNotFoundException;
 import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
 import com.alkemy.disneyapi.mapstruct.dtos.MovieDto;
-import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
 import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,22 +140,22 @@ public class MovieController {
 
     //SAVES A MOVIE
     @PostMapping()
-    public ResponseEntity<MovieDto> save(@Validated @RequestBody MoviePostDto movie) {
+    public ResponseEntity<MovieDto> save(@Validated @RequestBody MovieDto movie) {
 
-        Movie movieCreated = movieService.save(mapStructMapper.moviePostDtoToMovie(movie));
+        Movie movieCreated = movieService.save(mapStructMapper.movieDtoToMovie(movie));
         return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieCreated), HttpStatus.CREATED);
 
     }
 
     //UPDATE A MOVIE
     @PatchMapping("/{id}")
-    public ResponseEntity<MovieDto> update(@Validated @RequestBody MoviePostDto movie, @PathVariable("id") Long id){
+    public ResponseEntity<MovieDto> update(@Validated @RequestBody MovieDto movie, @PathVariable("id") Long id){
 
         Optional<Movie> movieToUpdate = movieService.findById(id);
 
         if (movieToUpdate.isPresent()) {
 
-            Movie movieToBeUpdated = mapStructMapper.moviePostDtoToMovie(movie);
+            Movie movieToBeUpdated = mapStructMapper.movieDtoToMovie(movie);
             movieToBeUpdated.setId(id);
             Movie movieUpdated = movieService.save(movieToBeUpdated);
             return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieUpdated), HttpStatus.OK);

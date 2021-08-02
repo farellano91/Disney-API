@@ -1,16 +1,16 @@
 package com.alkemy.disneyapi.character;
 
 import com.alkemy.disneyapi.exception.ResourceNotFoundException;
-import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterDto;
-import com.alkemy.disneyapi.mapstruct.dtos.CharacterPostDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
+import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -134,22 +134,22 @@ public class CharacterController {
 
     //SAVES A CHARACTER WITH NO MOVIES ASSIGNED
     @PostMapping()
-    public ResponseEntity<CharacterDto> save(@Validated @RequestBody CharacterPostDto character) {
+    public ResponseEntity<CharacterDto> save(@Validated @RequestBody CharacterDto character) {
 
-        Character characterCreated = characterService.save(mapStructMapper.characterPostDtoToCharacter(character));
+        Character characterCreated = characterService.save(mapStructMapper.characterDtoToCharacter(character));
         return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterCreated), HttpStatus.CREATED);
 
     }
 
     //UPDATE A CHARACTER
     @PatchMapping("/{id}")
-    public ResponseEntity<CharacterDto> update(@Validated @RequestBody CharacterPostDto character, @PathVariable("id") Long id) {
+    public ResponseEntity<CharacterDto> update(@Validated @RequestBody CharacterDto character, @PathVariable("id") Long id) {
 
         Optional<Character> characterToUpdate = characterService.findById(id);
 
         if (characterToUpdate.isPresent()) {
 
-            Character characterToBeUpdated = mapStructMapper.characterPostDtoToCharacter(character);
+            Character characterToBeUpdated = mapStructMapper.characterDtoToCharacter(character);
             characterToBeUpdated.setId(id);
             Character characterUpdated = characterService.save(characterToBeUpdated);
             return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterUpdated), HttpStatus.OK);

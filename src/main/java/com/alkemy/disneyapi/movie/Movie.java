@@ -4,7 +4,6 @@ import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.genre.Genre;
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;

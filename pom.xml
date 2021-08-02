@@ -75,8 +75,41 @@
             <artifactId>json-patch</artifactId>
             <version>1.13</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <name>Nexus Snapshots</name>
+            <id>snapshots-repo</id>
+            <url>http://repo1.maven.org/maven2</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>jcenter-snapshots</id>
+            <name>jcenter</name>
+            <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
+        </repository>
+    </repositories>
 
      <build>
          <plugins>
@@ -97,8 +130,8 @@
                  <artifactId>maven-compiler-plugin</artifactId>
                  <version>3.8.1</version>
                  <configuration>
-                     <source>1.11</source>
-                     <target>1.11</target>
+                     <source>1.8</source>
+                     <target>1.8</target>
                      <annotationProcessorPaths>
                          <path>
                              <groupId>org.mapstruct</groupId>
