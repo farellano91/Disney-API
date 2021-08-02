@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -34,6 +35,6 @@ public class CharacterDto {
 
     @JsonProperty(access= JsonProperty.Access.READ_ONLY)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Set<MovieSlimDto> movies;
+    private List<MovieSlimDto> movies;
 
 }

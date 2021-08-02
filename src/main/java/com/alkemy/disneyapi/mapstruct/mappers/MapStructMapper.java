@@ -1,6 +1,7 @@
 package com.alkemy.disneyapi.mapstruct.mappers;
 
 import com.alkemy.disneyapi.character.Character;
+import com.alkemy.disneyapi.genre.Genre;
 import com.alkemy.disneyapi.mapstruct.dtos.*;
 import com.alkemy.disneyapi.movie.Movie;
 import org.mapstruct.Mapper;
@@ -28,4 +29,6 @@ public interface MapStructMapper {
     List<MovieDto> moviesToMovieDtos(List<Movie> movies);
 
     Movie movieDtoToMovie(MovieDto movie);
+
+    List<GenreSlimDto> genresToGenreSlimDtos(List<Genre> genres);
 }
