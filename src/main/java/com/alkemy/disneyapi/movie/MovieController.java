@@ -193,8 +193,8 @@ public class MovieController {
 
     }
 
-    @DeleteMapping("{id}/movies")
-    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
+    @DeleteMapping("{id}/genres")
+    public ResponseEntity<?> removeGenresFromMovie(@RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
 
         Optional<Movie> movie = movieService.findById(movieId);
 
