@@ -1,7 +1,7 @@
 package com.alkemy.disneyapi.character;
 
 import com.alkemy.disneyapi.exception.ResourceNotFoundException;
-import com.alkemy.disneyapi.mapstruct.dtos.CharacterMoviesDto;
+import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterPostDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
@@ -181,15 +181,15 @@ public class CharacterController {
     }
 
     @PutMapping("{id}/movies")
-    public ResponseEntity<?> addMoviesToCharacter(@RequestBody CharacterMoviesDto moviesIds, @PathVariable("id") Long characterId) {
+    public ResponseEntity<?> addMoviesToCharacter(@RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
         Optional<Character> character = characterService.findById(characterId);
 
         if (character.isPresent()) {
 
-            if (characterService.checkMoviesExistence(moviesIds.getMovies())) {
+            if (characterService.checkMoviesExistence(moviesIds.getList())) {
 
-                characterService.addMovies(characterId, moviesIds.getMovies());
+                characterService.addMovies(characterId, moviesIds.getList());
                 return new ResponseEntity<>(HttpStatus.OK);
 
             } else {
@@ -207,15 +207,15 @@ public class CharacterController {
     }
 
     @DeleteMapping("{id}/movies")
-    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody CharacterMoviesDto moviesIds, @PathVariable("id") Long characterId) {
+    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
         Optional<Character> character = characterService.findById(characterId);
 
         if (character.isPresent()) {
 
-            if (characterService.checkMoviesExistence(moviesIds.getMovies())) {
+            if (characterService.checkMoviesExistence(moviesIds.getList())) {
 
-                characterService.removeMovies(characterId, moviesIds.getMovies());
+                characterService.removeMovies(characterId, moviesIds.getList());
                 return new ResponseEntity<>(HttpStatus.OK);
 
             } else {

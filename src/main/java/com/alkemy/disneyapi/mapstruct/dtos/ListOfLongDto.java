@@ -8,8 +8,8 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
-public class CharacterMoviesDto {
+public class ListOfLongDto {
 
-    private List<Long> movies;
+    private List<Long> list;
 
 }

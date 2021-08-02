@@ -1,8 +1,10 @@
 package com.alkemy.disneyapi.movie;
 
-import com.alkemy.disneyapi.character.Character;
 import com.alkemy.disneyapi.exception.ResourceNotFoundException;
-import com.alkemy.disneyapi.mapstruct.dtos.*;
+import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MovieDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MoviePostDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -168,15 +170,15 @@ public class MovieController {
     }
 
     @PutMapping("{id}/genres")
-    public ResponseEntity<?> addGenresToMovie(@RequestBody MovieGenresDto genresIds, @PathVariable("id") Long movieId) {
+    public ResponseEntity<?> addGenresToMovie(@RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
 
         Optional<Movie> movie = movieService.findById(movieId);
 
         if (movie.isPresent()) {
 
-            if (movieService.checkGenresExistence(genresIds.getGenres())) {
+            if (movieService.checkGenresExistence(genresIds.getList())) {
 
-                movieService.addGenres(movieId, genresIds.getGenres());
+                movieService.addGenres(movieId, genresIds.getList());
                 return new ResponseEntity<>(HttpStatus.OK);
 
             } else {
@@ -194,15 +196,15 @@ public class MovieController {
     }
 
     @DeleteMapping("{id}/movies")
-    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody MovieGenresDto genresIds, @PathVariable("id") Long movieId) {
+    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
 
         Optional<Movie> movie = movieService.findById(movieId);
 
         if (movie.isPresent()) {
 
-            if (movieService.checkGenresExistence(genresIds.getGenres())) {
+            if (movieService.checkGenresExistence(genresIds.getList())) {
 
-                movieService.removeGenres(movieId, genresIds.getGenres());
+                movieService.removeGenres(movieId, genresIds.getList());
                 return new ResponseEntity<>(HttpStatus.OK);
 
             } else {
