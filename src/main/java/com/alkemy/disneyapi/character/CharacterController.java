@@ -1,20 +1,48 @@
 package com.alkemy.disneyapi.character;
 
+import com.alkemy.disneyapi.exception.ErrorDetails;
 import com.alkemy.disneyapi.exception.ResourceNotFoundException;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
 import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
+import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+@OpenAPIDefinition(info = @Info(title = "Disney API",
+        description = "API for exploring the world of Disney",
+        version = "1.0",
+        contact = @Contact(
+                name = "Fernando Arellano",
+                email = "f.arellano919@gmail.com",
+                url = "https://github.com/farellano91"
+        ),
+        license = @License(
+                name = "MIT Licence",
+                url = "https://opensource.org/licenses/mit-license.php"
+        )
+))
+
+@Tag(name = "Character Controller")
 @RestController
 @RequestMapping("/characters")
 public class CharacterController {
@@ -30,7 +58,12 @@ public class CharacterController {
 
     }
 
-    //GETS ALL CHARACTERS DTO'S
+    @Operation(description = "Gets all characters")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All characters are shown",content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterSlimDto.class)) }),
+            @ApiResponse(responseCode = "204", description = "No characters to show", content = @Content)
+    })
     @GetMapping()
     public ResponseEntity<List<CharacterSlimDto>> getAll() {
 
@@ -48,6 +81,13 @@ public class CharacterController {
 
     }
 
+    @Operation(description = "Finds a character by his ID and shows his details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Character found",content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterDto.class)) }),
+            @ApiResponse(responseCode = "404", description = "No character have been found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
+    })
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDto> getCharacterDetails(@PathVariable("id") Long id) {
 
@@ -59,9 +99,8 @@ public class CharacterController {
 
     }
 
-    //GET CHARACTERS BY NAME
     @GetMapping(params = "name")
-    public ResponseEntity<List<CharacterDto>> findByName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<List<CharacterDto>> findByName(@Parameter(description = "Filter by name") @RequestParam(value = "name", required = false) String name) {
 
         List<Character> characters = characterService.findByName(name);
 
@@ -77,9 +116,8 @@ public class CharacterController {
 
     }
 
-    //GET CHARACTERS BY AGE
     @GetMapping(params="age")
-    public ResponseEntity<List<CharacterDto>> findByAge(@RequestParam("age") Integer age) {
+    public ResponseEntity<List<CharacterDto>> findByAge(@Parameter(description = "Filter by age") @RequestParam(value = "age", required = false) Integer age) {
 
         List<Character> characters = characterService.findByAge(age);
 
@@ -95,9 +133,8 @@ public class CharacterController {
 
     }
 
-    //GET CHARACTERS BY MOVIE
     @GetMapping(params="movie")
-    public ResponseEntity<List<CharacterDto>> getByMovieId(@RequestParam("movie") Long movieId) {
+    public ResponseEntity<List<CharacterDto>> getByMovieId(@Parameter(description = "Filter by MovieID") @RequestParam(value = "movie", required = false) Long movieId) {
 
         List<Character> characters = characterService.getByMovieId(movieId);
 
@@ -113,7 +150,12 @@ public class CharacterController {
 
     }
 
-    //DELETES A CHARACTER
+    @Operation(description = "Deletes a character by his ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Character deleted", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteById(@PathVariable("id") Long id) {
 
@@ -132,7 +174,13 @@ public class CharacterController {
 
     }
 
-    //SAVES A CHARACTER WITH NO MOVIES ASSIGNED
+    @Operation(description = "Saves a character")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Character created",content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
+    })
     @PostMapping()
     public ResponseEntity<CharacterDto> save(@Validated @RequestBody CharacterDto character) {
 
@@ -141,7 +189,15 @@ public class CharacterController {
 
     }
 
-    //UPDATE A CHARACTER
+    @Operation(description = "Updates a character's info")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Character updated", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterDto.class)) }),
+            @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
+            @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<CharacterDto> update(@Validated @RequestBody CharacterDto character, @PathVariable("id") Long id) {
 
@@ -163,8 +219,16 @@ public class CharacterController {
     }
 
 
+
+    @Operation(description = "Shows all the movies of the character with the given ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All movies of the character are shown", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterSlimDto.class)) }),
+            @ApiResponse(responseCode = "404", description = "No character with the given ID have been found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) } )
+    })
     @GetMapping("{id}/movies")
-    public ResponseEntity<?> getCharacterMovies(@PathVariable("id") Long characterId) {
+    public ResponseEntity<List<MovieSlimDto>> getCharacterMovies(@PathVariable("id") Long characterId) {
 
         Optional<Character> character = characterService.findById(characterId);
 
@@ -180,8 +244,16 @@ public class CharacterController {
 
     }
 
+    @Operation(description = "Given a list of Movie ID's, adds all the corresponding movies to the character's movies")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Movies added", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
+            @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
+    })
     @PutMapping("{id}/movies")
-    public ResponseEntity<?> addMoviesToCharacter(@RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
+    public ResponseEntity<?> addMoviesToCharacter(@Validated @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
         Optional<Character> character = characterService.findById(characterId);
 
@@ -206,23 +278,23 @@ public class CharacterController {
 
     }
 
+    @Operation(description = "Given a list of Movie ID's, removes all the corresponding movies from the character's movies")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Movies removed", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
+            @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
+    })
     @DeleteMapping("{id}/movies")
-    public ResponseEntity<?> removeMoviesFromCharacter(@RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
+    public ResponseEntity<?> removeMoviesFromCharacter(@Validated @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
         Optional<Character> character = characterService.findById(characterId);
 
         if (character.isPresent()) {
 
-            if (characterService.checkMoviesExistence(moviesIds.getList())) {
-
-                characterService.removeMovies(characterId, moviesIds.getList());
-                return new ResponseEntity<>(HttpStatus.OK);
-
-            } else {
-
-                throw new ResourceNotFoundException("Make sure all movies you want to remove from the character already exist on the server");
-
-            }
+            characterService.removeMovies(characterId, moviesIds.getList());
+            return new ResponseEntity<>(HttpStatus.OK);
 
         } else {
 
