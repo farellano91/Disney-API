@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -25,7 +25,7 @@ public class CharacterDto {
 
     @NotNull
     @Min(0)
-    private int age;
+    private Integer age;
 
     @NotNull
     private Float weight;

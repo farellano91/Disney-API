@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -199,15 +200,13 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<CharacterDto> update(@Validated @RequestBody CharacterDto character, @PathVariable("id") Long id) {
+    public ResponseEntity<CharacterDto> update(@RequestBody CharacterDto character, @PathVariable("id") Long id) {
 
         Optional<Character> characterToUpdate = characterService.findById(id);
 
         if (characterToUpdate.isPresent()) {
 
-            Character characterToBeUpdated = mapStructMapper.characterDtoToCharacter(character);
-            characterToBeUpdated.setId(id);
-            Character characterUpdated = characterService.save(characterToBeUpdated);
+            Character characterUpdated = characterService.save(mapStructMapper.updateCharacterFromDto(character, characterToUpdate.get()));
             return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterUpdated), HttpStatus.OK);
 
         } else {
@@ -217,8 +216,6 @@ public class CharacterController {
         }
 
     }
-
-
 
     @Operation(description = "Shows all the movies of the character with the given ID")
     @ApiResponses(value = {
