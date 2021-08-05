@@ -23,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +42,7 @@ import java.util.Optional;
         )
 ))
 
-@Tag(name = "Character Controller")
+@Tag(name = "Characters")
 @RestController
 @RequestMapping("/characters")
 public class CharacterController {
@@ -66,7 +65,7 @@ public class CharacterController {
             @ApiResponse(responseCode = "204", description = "No characters to show", content = @Content)
     })
     @GetMapping()
-    public ResponseEntity<List<CharacterSlimDto>> getAll() {
+    public ResponseEntity<List<CharacterSlimDto>> getAllCharacters() {
 
          List<Character> characters = characterService.getAll();
 
@@ -90,7 +89,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @GetMapping("/{id}")
-    public ResponseEntity<CharacterDto> getCharacterDetails(@PathVariable("id") Long id) {
+    public ResponseEntity<CharacterDto> getCharacterById(@PathVariable("id") Long id) {
 
         Optional<Character> character = characterService.findById(id);
 
@@ -101,7 +100,7 @@ public class CharacterController {
     }
 
     @GetMapping(params = "name")
-    public ResponseEntity<List<CharacterDto>> findByName(@Parameter(description = "Filter by name") @RequestParam(value = "name", required = false) String name) {
+    public ResponseEntity<List<CharacterDto>> findCharacterByName(@Parameter(description = "Filter by name") @RequestParam(value = "name", required = false) String name) {
 
         List<Character> characters = characterService.findByName(name);
 
@@ -118,7 +117,7 @@ public class CharacterController {
     }
 
     @GetMapping(params="age")
-    public ResponseEntity<List<CharacterDto>> findByAge(@Parameter(description = "Filter by age") @RequestParam(value = "age", required = false) Integer age) {
+    public ResponseEntity<List<CharacterDto>> findCharacterByAge(@Parameter(description = "Filter by age") @RequestParam(value = "age", required = false) Integer age) {
 
         List<Character> characters = characterService.findByAge(age);
 
@@ -135,7 +134,7 @@ public class CharacterController {
     }
 
     @GetMapping(params="movie")
-    public ResponseEntity<List<CharacterDto>> getByMovieId(@Parameter(description = "Filter by MovieID") @RequestParam(value = "movie", required = false) Long movieId) {
+    public ResponseEntity<List<CharacterDto>> findCharacterByMovieId(@Parameter(description = "Filter by MovieID") @RequestParam(value = "movie", required = false) Long movieId) {
 
         List<Character> characters = characterService.getByMovieId(movieId);
 
@@ -158,7 +157,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteCharacterById(@PathVariable("id") Long id) {
 
         Optional<Character> character = characterService.findById(id);
 
@@ -183,7 +182,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PostMapping()
-    public ResponseEntity<CharacterDto> save(@Validated @RequestBody CharacterDto character) {
+    public ResponseEntity<CharacterDto> saveCharacter(@Validated @RequestBody CharacterDto character) {
 
         Character characterCreated = characterService.save(mapStructMapper.characterDtoToCharacter(character));
         return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterCreated), HttpStatus.CREATED);
@@ -200,7 +199,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<CharacterDto> update(@RequestBody CharacterDto character, @PathVariable("id") Long id) {
+    public ResponseEntity<CharacterDto> updateCharacter(@Validated @RequestBody CharacterDto character, @PathVariable("id") Long id) {
 
         Optional<Character> characterToUpdate = characterService.findById(id);
 
@@ -241,7 +240,7 @@ public class CharacterController {
 
     }
 
-    @Operation(description = "Given a list of Movie ID's, adds all the corresponding movies to the character's movies")
+    @Operation(description = "Given a list of MovieID's, adds all the corresponding movies to the character's movies")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Movies added", content = @Content),
             @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {

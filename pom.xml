@@ -31,7 +31,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -69,12 +68,6 @@
             <artifactId>mapstruct</artifactId>
             <version>1.4.2.Final</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.github.java-json-tools/json-patch -->
-        <dependency>
-            <groupId>com.github.java-json-tools</groupId>
-            <artifactId>json-patch</artifactId>
-            <version>1.13</version>
-        </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
@@ -86,31 +79,6 @@
             <version>2.1.10</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </snapshots>
-            <name>Nexus Snapshots</name>
-            <id>snapshots-repo</id>
-            <url>http://repo1.maven.org/maven2</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>jcenter-snapshots</id>
-            <name>jcenter</name>
-            <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
-        </repository>
-    </repositories>
-
      <build>
          <plugins>
              <plugin>
@@ -153,5 +121,4 @@
              </plugin>
          </plugins>
      </build>
-
  </project>

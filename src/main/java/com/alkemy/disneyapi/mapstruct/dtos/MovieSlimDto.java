@@ -2,7 +2,6 @@ package com.alkemy.disneyapi.mapstruct.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
 @Getter
