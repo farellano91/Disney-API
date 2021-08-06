@@ -4,10 +4,12 @@ import com.alkemy.disneyapi.genre.Genre;
 import com.alkemy.disneyapi.genre.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class MovieService {
 
@@ -71,13 +73,7 @@ public class MovieService {
 
     public List<Movie> getByGenreId(Long idGenre) {
 
-        return movieRepository.findAll().stream().filter(x -> haveGenre(x, idGenre)).collect(Collectors.toList());
-
-    }
-
-    private boolean haveGenre(Movie movie, Long idGenre) {
-
-        return movie.getGenres().stream().anyMatch(g -> g.getId().equals(idGenre));
+        return movieRepository.findByGenre(idGenre);
 
     }
 

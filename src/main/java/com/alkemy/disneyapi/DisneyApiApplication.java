@@ -24,6 +24,6 @@ public class DisneyApiApplication {
 * 9 - CRUD de Peliculas -------> OK
 * 10 - Búsqueda de Peliculas -------> OK
 * 11 - Envío de mails -------> TODO
-* 12 - Documentación -------> TODO
+* 12 - Documentación -------> OK
 * 13 - Testing -------> TODO
 * */

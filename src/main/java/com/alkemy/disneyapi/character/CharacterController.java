@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @OpenAPIDefinition(info = @Info(title = "Disney API",
         description = "API for exploring the world of Disney",
         version = "1.0",
@@ -67,7 +66,7 @@ public class CharacterController {
     @GetMapping()
     public ResponseEntity<List<CharacterSlimDto>> getAllCharacters() {
 
-         List<Character> characters = characterService.getAll();
+         List<Character> characters = characterService.getAllCharacters();
 
          if(characters.isEmpty()){
 
@@ -136,7 +135,7 @@ public class CharacterController {
     @GetMapping(params="movie")
     public ResponseEntity<List<CharacterDto>> findCharacterByMovieId(@Parameter(description = "Filter by MovieID") @RequestParam(value = "movie", required = false) Long movieId) {
 
-        List<Character> characters = characterService.getByMovieId(movieId);
+        List<Character> characters = characterService.findByMovieId(movieId);
 
         if(characters.isEmpty()){
 

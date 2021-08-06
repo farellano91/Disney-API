@@ -4,10 +4,12 @@ import com.alkemy.disneyapi.movie.Movie;
 import com.alkemy.disneyapi.movie.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class CharacterService {
 
@@ -22,7 +24,7 @@ public class CharacterService {
         this.movieRepository = movieRepository;
     }
 
-    public List<Character> getAll() {
+    public List<Character> getAllCharacters() {
 
         return characterRepository.findAll();
 
@@ -56,15 +58,9 @@ public class CharacterService {
 
     }
 
-    public List<Character> getByMovieId(Long idMovie) {
+    public List<Character> findByMovieId(Long idMovie) {
 
-        return characterRepository.findAll().stream().filter(x -> isInMovie(x, idMovie)).collect(Collectors.toList());
-
-    }
-
-    private boolean isInMovie(Character character, Long idMovie) {
-
-        return character.getMovies().stream().anyMatch(m -> m.getId().equals(idMovie));
+        return characterRepository.findByMovieId(idMovie);
 
     }
 
