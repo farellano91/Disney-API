@@ -48,7 +48,7 @@ public class MovieController {
     @GetMapping()
     public ResponseEntity<List<MovieSlimDto>> getAllMovies() {
 
-        List<Movie> movies = movieService.getAll();
+        List<Movie> movies = movieService.getAllMovies();
 
         if(movies.isEmpty()){
 
