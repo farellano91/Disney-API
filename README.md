@@ -5,6 +5,7 @@ Alkemy Labs Java Challenge
 
 * Java 11
 * Spring Boot 2
+* H2 in-memory DB
 * Lombok
 * Mapstruct
 * OpenAPI 3.0
