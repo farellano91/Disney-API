@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -115,6 +116,26 @@ public class GlobalResponseException extends ResponseEntityExceptionHandler {
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Resource Not Found", details);
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmailAlreadyInUseException.class)
+    public ResponseEntity<Object> handleEmailAlreadyInUseException(EmailAlreadyInUseException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+        ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Email already in use", details);
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+        ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Email not found", details);
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }

@@ -7,16 +7,13 @@ import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
 import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
 import com.alkemy.disneyapi.mapstruct.dtos.MovieSlimDto;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapper;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,23 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@OpenAPIDefinition(info = @Info(title = "Disney API",
-        description = "API for exploring the world of Disney",
-        version = "1.0",
-        contact = @Contact(
-                name = "Fernando Arellano",
-                email = "f.arellano919@gmail.com",
-                url = "https://github.com/farellano91"
-        ),
-        license = @License(
-                name = "MIT Licence",
-                url = "https://opensource.org/licenses/mit-license.php"
-        )
-))
-
 @Tag(name = "Characters")
 @RestController
 @RequestMapping("/characters")
+@SecurityRequirement(name = "bearerAuth")
 public class CharacterController {
 
     private final MapStructMapper mapStructMapper;

@@ -14,4 +14,4 @@ Alkemy Labs Java Challenge
 * Download the project or clone it
 * Open the console and go to the project folder
 * Run this command: mvn spring-boot:run
-* Open your web browser and go to http://localhost:8080/disneyapi/swagger-ui.html to see the API docs and play with the endpoints
+* Open your web browser and go to http://localhost:8080/swagger-ui.html to see the API docs and play with the endpoints
