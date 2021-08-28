@@ -3,7 +3,7 @@ package com.alkemy.disneyapi.user;
 import com.alkemy.disneyapi.mapstruct.dtos.UserDto;
 import com.alkemy.disneyapi.security.CustomUserDetailsService;
 import com.alkemy.disneyapi.security.JwtUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class UserService{
 
@@ -20,20 +21,6 @@ public class UserService{
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    public UserService(UserRepository userRepository,
-                       BCryptPasswordEncoder bCryptPasswordEncoder,
-                       AuthenticationManager authenticationManager,
-                       JwtUtils jwtUtil,
-                       CustomUserDetailsService customUserDetailsService) {
-
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.customUserDetailsService = customUserDetailsService;
-    }
 
     public boolean checkEmailExistence(String email) {
 

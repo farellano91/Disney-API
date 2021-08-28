@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Tag(name = "Movies")
 @RestController
 @RequestMapping("/movies")
@@ -32,14 +33,6 @@ public class MovieController {
 
     private final MapStructMapper mapStructMapper;
     private final MovieService movieService;
-
-    @Autowired
-    public MovieController(MapStructMapper mapStructMapper, MovieService movieService) {
-
-        this.mapStructMapper = mapStructMapper;
-        this.movieService = movieService;
-
-    }
 
     @Operation(description = "Get all movies")
     @ApiResponses(value = {
@@ -146,7 +139,7 @@ public class MovieController {
 
     @Operation(description = "Delete a movie by its ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Movie deleted", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Movie deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "No movie with that ID have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
@@ -158,7 +151,7 @@ public class MovieController {
         if (movie.isPresent()) {
 
             movieService.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } else {
 
@@ -170,7 +163,7 @@ public class MovieController {
 
     @Operation(description = "Save a movie")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Movie created",content = {
+            @ApiResponse(responseCode = "201", description = "Movie created", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = MovieDto.class)) }),
             @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
@@ -270,7 +263,7 @@ public class MovieController {
 
     @Operation(description = "Given a list of GenreID's, remove all the corresponding genres from the movie")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Genres removed", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Genres removed", content = @Content),
             @ApiResponse(responseCode = "404", description = "No movie with that ID have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
@@ -284,7 +277,7 @@ public class MovieController {
         if (movie.isPresent()) {
 
             movieService.removeGenres(movieId, genresIds.getList());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } else {
 

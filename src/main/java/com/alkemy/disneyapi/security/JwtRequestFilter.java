@@ -1,6 +1,6 @@
 package com.alkemy.disneyapi.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,20 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@RequiredArgsConstructor
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtil;
 
     private final CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    public JwtRequestFilter(JwtUtils jwtUtil, CustomUserDetailsService customUserDetailsService) {
-
-        this.jwtUtil = jwtUtil;
-        this.customUserDetailsService = customUserDetailsService;
-
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

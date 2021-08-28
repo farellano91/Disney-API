@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Tag(name = "Characters")
 @RestController
 @RequestMapping("/characters")
@@ -32,14 +33,6 @@ public class CharacterController {
 
     private final MapStructMapper mapStructMapper;
     private final CharacterService characterService;
-
-    @Autowired
-    public CharacterController(MapStructMapper mapStructMapper, CharacterService characterService) {
-
-        this.mapStructMapper = mapStructMapper;
-        this.characterService = characterService;
-
-    }
 
     @Operation(description = "Gets all characters")
     @ApiResponses(value = {
@@ -135,7 +128,7 @@ public class CharacterController {
 
     @Operation(description = "Deletes a character by his ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Character deleted", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Character deleted", content = @Content),
             @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
@@ -147,7 +140,7 @@ public class CharacterController {
         if (character.isPresent()) {
 
             characterService.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } else {
 
@@ -259,7 +252,7 @@ public class CharacterController {
 
     @Operation(description = "Given a list of Movie ID's, removes all the corresponding movies from the character's movies")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Movies removed", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Movies removed", content = @Content),
             @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
@@ -273,7 +266,7 @@ public class CharacterController {
         if (character.isPresent()) {
 
             characterService.removeMovies(characterId, moviesIds.getList());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         } else {
 
