@@ -82,7 +82,7 @@ public class CharacterController {
 
         if(characters.isEmpty()){
 
-            throw new ResourceNotFoundException("No Characters with Name : " + name);
+            throw new ResourceNotFoundException("No Characters with name : " + name);
 
         } else {
 
@@ -99,7 +99,7 @@ public class CharacterController {
 
         if(characters.isEmpty()){
 
-            throw new ResourceNotFoundException("No Characters with Age : " + age);
+            throw new ResourceNotFoundException("No Characters with age : " + age);
 
         } else {
 
@@ -116,7 +116,7 @@ public class CharacterController {
 
         if(characters.isEmpty()){
 
-            throw new ResourceNotFoundException("No Characters with MovieId : " + movieId);
+            throw new ResourceNotFoundException("No Characters with movieId : " + movieId);
 
         } else {
 
