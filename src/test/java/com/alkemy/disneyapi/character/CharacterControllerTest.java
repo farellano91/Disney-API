@@ -6,8 +6,6 @@ import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
 import com.alkemy.disneyapi.mapstruct.mappers.MapStructMapperImpl;
 import com.alkemy.disneyapi.movie.Movie;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,26 +41,11 @@ class CharacterControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private Character character1, character2, characterNotValid;
-
-    private List<Character> listCharacters;
-
-    private Movie movie1;
-
-    @BeforeEach
-    void setUp() {
-
-        character1 = new Character(1L, "name1", "image1", 20, 5.1F, "history1", new HashSet<>());
-        character2 = new Character(2L, "name2", "image2", 21, 5.2F, "history2", new HashSet<>());
-        characterNotValid = new Character(1L, null, "image1", 20, 5.1F, "history1", new HashSet<>());
-        listCharacters = Arrays.asList(character1, character2);
-        movie1 = new Movie(1L, "title1", "image1", new Date(), 4, new HashSet<>(), new HashSet<>());
-
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
+    Character character1 = new Character(1L, "name1", "image1", 20, 5.1F, "history1", new HashSet<>());
+    Character character2 = new Character(2L, "name2", "image2", 21, 5.2F, "history2", new HashSet<>());
+    Character characterNotValid = new Character(1L, null, "image1", 20, 5.1F, "history1", new HashSet<>());
+    List<Character> listCharacters = Arrays.asList(character1, character2);
+    Movie movie1 = new Movie(1L, "title1", "image1", new Date(), 4, new HashSet<>(), new HashSet<>());
 
     @Test
     void getAllCharacters() throws Exception {
