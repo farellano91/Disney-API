@@ -1,6 +1,5 @@
 package com.alkemy.disneyapi.exception;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -8,28 +7,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
-public class GlobalResponseException extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+public class ControllerHandler extends ResponseEntityExceptionHandler {
 
     // handleHttpMediaTypeNotSupported : triggers when the JSON is invalid
-    @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
-            HttpMediaTypeNotSupportedException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
+    @ExceptionHandler(value = {HttpMediaTypeNotSupportedException.class})
+    public ResponseEntity<ErrorDetails> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
 
         List<String> details = new ArrayList<>();
 
@@ -47,20 +42,20 @@ public class GlobalResponseException extends ResponseEntityExceptionHandler {
     }
 
     // handleHttpMessageNotReadable : triggers when the JSON is malformed
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
+    public ResponseEntity<ErrorDetails> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Malformed JSON request", details);
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
     }
 
-    // handleMethodArgumentNotValid : triggers when @Valid fails
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
+    // handleMethodArgumentNotValid : triggers when @Validated fails
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    public ResponseEntity<ErrorDetails> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 
         List<String> details = ex.getBindingResult()
                 .getFieldErrors()
@@ -71,13 +66,12 @@ public class GlobalResponseException extends ResponseEntityExceptionHandler {
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Validation Errors", details);
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
     }
 
     // handleMissingServletRequestParameter : triggers when there are missing parameters
-    @Override
-    protected ResponseEntity<Object> handleMissingServletRequestParameter(
-            MissingServletRequestParameterException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
+    @ExceptionHandler(value = {MissingServletRequestParameterException.class})
+    public ResponseEntity<ErrorDetails> handleMissingServletRequestParameter(MissingServletRequestParameterException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getParameterName() + " parameter is missing");
@@ -85,65 +79,71 @@ public class GlobalResponseException extends ResponseEntityExceptionHandler {
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Missing Parameters", details);
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
     }
 
     // handleMethodArgumentTypeMismatch : triggers when a parameter's type does not match
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
+    @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorDetails> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
 
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Type Mismatch", details);
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
     }
 
     // handleConstraintViolationException : triggers when @Validated fails
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<?> handleConstraintViolationException(Exception ex, WebRequest request) {
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ResponseEntity<ErrorDetails> handleConstraintViolationException(Exception ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Constraint Violation", details);
 
-        return new ResponseEntity<Object>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
     }
 
     // handleResourceNotFoundException : triggers when there is not resource with the specified ID in BDD
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
+    @ExceptionHandler(value = {ResourceNotFoundException.class})
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Resource Not Found", details);
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
     }
 
-    @ExceptionHandler(EmailAlreadyInUseException.class)
-    public ResponseEntity<Object> handleEmailAlreadyInUseException(EmailAlreadyInUseException ex) {
+    @ExceptionHandler(value = {EmailAlreadyInUseException.class})
+    public ResponseEntity<ErrorDetails> handleEmailAlreadyInUseException(EmailAlreadyInUseException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Email already in use", details);
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
     }
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+    @ExceptionHandler(value = {UsernameNotFoundException.class})
+    public ResponseEntity<ErrorDetails> handleUsernameNotFoundException(UsernameNotFoundException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Email not found", details);
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
     }
 
     // handleNoHandlerFoundException : triggers when the handler method is invalid
-    @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(
-            NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @ExceptionHandler(value = {NoHandlerFoundException.class})
+    public ResponseEntity<ErrorDetails> handleNoHandlerFoundException(NoHandlerFoundException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(String.format("Could not find the %s method for URL %s", ex.getHttpMethod(), ex.getRequestURL()));
@@ -151,11 +151,10 @@ public class GlobalResponseException extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 
-
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> IllegalArgumentException(IllegalArgumentException ex) {
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    public ResponseEntity<ErrorDetails> IllegalArgumentException(IllegalArgumentException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
