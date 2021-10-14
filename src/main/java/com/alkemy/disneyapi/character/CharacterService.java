@@ -67,8 +67,7 @@ public class CharacterService implements ICharacterService {
 
     }
 
-    @Override
-    public boolean checkMoviesExistence(List<Long> moviesIds) {
+    private boolean checkMoviesExistence(List<Long> moviesIds) {
 
         return movieRepository.findAll().stream().map(Movie::getId).collect(Collectors.toList()).containsAll(moviesIds);
 

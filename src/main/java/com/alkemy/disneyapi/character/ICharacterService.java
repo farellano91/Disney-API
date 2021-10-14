@@ -18,8 +18,6 @@ public interface ICharacterService {
 
     List<Character> findByMovieId(Long idMovie);
 
-    boolean checkMoviesExistence(List<Long> moviesIds);
-
     void addMovies(Long characterId, List<Long> moviesIds);
 
     void removeMovies(Long characterId, List<Long> moviesIds);
