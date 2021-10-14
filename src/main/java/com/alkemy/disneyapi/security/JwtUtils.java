@@ -54,7 +54,8 @@ public class JwtUtils {
 
     private String createToken(Map<String, Object> claims, String subject) {
 
-        int EXPIRATION_TIME = 60000 * 30; //Token expires in 30 minutes
+        //Token expires in 30 minutes
+        final int EXPIRATION_TIME = 60000 * 30;
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))

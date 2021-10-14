@@ -1,14 +1,19 @@
 package com.alkemy.disneyapi.exception;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -23,8 +28,8 @@ import java.util.stream.Collectors;
 public class ControllerHandler extends ResponseEntityExceptionHandler {
 
     // handleHttpMediaTypeNotSupported : triggers when the JSON is invalid
-    @ExceptionHandler(value = {HttpMediaTypeNotSupportedException.class})
-    public ResponseEntity<ErrorDetails> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
+    @Override
+    public ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         List<String> details = new ArrayList<>();
 
@@ -42,8 +47,8 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     // handleHttpMessageNotReadable : triggers when the JSON is malformed
-    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
-    public ResponseEntity<ErrorDetails> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+    @Override
+    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
@@ -54,13 +59,13 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     // handleMethodArgumentNotValid : triggers when @Validated fails
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity<ErrorDetails> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    @Override
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         List<String> details = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> error.getObjectName() + " : " + error.getDefaultMessage())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
         ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Validation Errors", details);
@@ -70,8 +75,8 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     // handleMissingServletRequestParameter : triggers when there are missing parameters
-    @ExceptionHandler(value = {MissingServletRequestParameterException.class})
-    public ResponseEntity<ErrorDetails> handleMissingServletRequestParameter(MissingServletRequestParameterException ex) {
+    @Override
+    public ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getParameterName() + " parameter is missing");
@@ -97,7 +102,7 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
 
     // handleConstraintViolationException : triggers when @Validated fails
     @ExceptionHandler(value = {ConstraintViolationException.class})
-    public ResponseEntity<ErrorDetails> handleConstraintViolationException(Exception ex) {
+    public ResponseEntity<ErrorDetails> handleConstraintViolationException(ConstraintViolationException ex) {
 
         List<String> details = new ArrayList<>();
         details.add(ex.getMessage());
@@ -142,8 +147,8 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     // handleNoHandlerFoundException : triggers when the handler method is invalid
-    @ExceptionHandler(value = {NoHandlerFoundException.class})
-    public ResponseEntity<ErrorDetails> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+    @Override
+    public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         List<String> details = new ArrayList<>();
         details.add(String.format("Could not find the %s method for URL %s", ex.getHttpMethod(), ex.getRequestURL()));
@@ -162,6 +167,17 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 
+    }
+
+    @ExceptionHandler(value = {BadCredentialsException.class})
+    public ResponseEntity<ErrorDetails> handleBadCredentialsException(BadCredentialsException ex) {
+
+        List<String> details = new ArrayList<>();
+        details.add(ex.getMessage());
+
+        ErrorDetails error = new ErrorDetails(LocalDateTime.now(), "Auth error", details);
+
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
 }

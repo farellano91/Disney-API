@@ -1,7 +1,6 @@
 package com.alkemy.disneyapi.character;
 
 import com.alkemy.disneyapi.exception.ErrorDetails;
-import com.alkemy.disneyapi.exception.ResourceNotFoundException;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterDto;
 import com.alkemy.disneyapi.mapstruct.dtos.CharacterSlimDto;
 import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
@@ -20,9 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Tag(name = "Characters")
@@ -37,23 +36,12 @@ public class CharacterController {
     @Operation(description = "Gets all characters")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All characters are shown",content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterSlimDto.class)) }),
-            @ApiResponse(responseCode = "204", description = "No characters to show", content = @Content)
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterSlimDto.class)) })
     })
     @GetMapping()
     public ResponseEntity<List<CharacterSlimDto>> getAllCharacters() {
 
-         List<Character> characters = characterService.getAllCharacters();
-
-         if(characters.isEmpty()){
-
-             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-         } else {
-
-             return new ResponseEntity<>(mapStructMapper.charactersToCharacterSlimDtos(characters), HttpStatus.OK);
-
-         }
+        return new ResponseEntity<>(mapStructMapper.charactersToCharacterSlimDtos(characterService.getAll()), HttpStatus.OK);
 
     }
 
@@ -67,62 +55,28 @@ public class CharacterController {
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDto> getCharacterById(@PathVariable("id") Long id) {
 
-        Optional<Character> character = characterService.findById(id);
-
-        return character.map(value -> new ResponseEntity<>
-                 (mapStructMapper.characterToCharacterDto(value), HttpStatus.OK))
-                 .orElseThrow(() -> new ResourceNotFoundException("No Character with ID : " + id));
+        return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterService.findById(id)), HttpStatus.OK);
 
     }
 
     @GetMapping(params = "name")
     public ResponseEntity<List<CharacterDto>> findCharacterByName(@Parameter(description = "Filter by name") @RequestParam(value = "name", required = false) String name) {
 
-        List<Character> characters = characterService.findByName(name);
-
-        if(characters.isEmpty()){
-
-            throw new ResourceNotFoundException("No Characters with name : " + name);
-
-        } else {
-
-            return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characters), HttpStatus.OK);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characterService.findByName(name)), HttpStatus.OK);
 
     }
 
     @GetMapping(params="age")
     public ResponseEntity<List<CharacterDto>> findCharacterByAge(@Parameter(description = "Filter by age") @RequestParam(value = "age", required = false) Integer age) {
 
-        List<Character> characters = characterService.findByAge(age);
-
-        if(characters.isEmpty()){
-
-            throw new ResourceNotFoundException("No Characters with age : " + age);
-
-        } else {
-
-            return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characters), HttpStatus.OK);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characterService.findByAge(age)), HttpStatus.OK);
 
     }
 
     @GetMapping(params="movie")
     public ResponseEntity<List<CharacterDto>> findCharacterByMovieId(@Parameter(description = "Filter by MovieID") @RequestParam(value = "movie", required = false) Long movieId) {
 
-        List<Character> characters = characterService.findByMovieId(movieId);
-
-        if(characters.isEmpty()){
-
-            throw new ResourceNotFoundException("No Characters with movieId : " + movieId);
-
-        } else {
-
-            return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characters), HttpStatus.OK);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.charactersToCharacterDtos(characterService.findByMovieId(movieId)), HttpStatus.OK);
 
     }
 
@@ -135,18 +89,9 @@ public class CharacterController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteCharacterById(@PathVariable("id") Long id) {
 
-        Optional<Character> character = characterService.findById(id);
+        characterService.delete(id);
 
-        if (character.isPresent()) {
-
-            characterService.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        } else {
-
-            throw new ResourceNotFoundException("No Character with ID : " + id);
-
-        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 
@@ -161,6 +106,7 @@ public class CharacterController {
     public ResponseEntity<CharacterDto> saveCharacter(@Validated @RequestBody CharacterDto character) {
 
         Character characterCreated = characterService.save(mapStructMapper.characterDtoToCharacter(character));
+
         return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterCreated), HttpStatus.CREATED);
 
     }
@@ -177,18 +123,9 @@ public class CharacterController {
     @PatchMapping("/{id}")
     public ResponseEntity<CharacterDto> updateCharacter(@Validated @RequestBody CharacterDto character, @PathVariable("id") Long id) {
 
-        Optional<Character> characterToUpdate = characterService.findById(id);
+        Character characterUpdated = characterService.save(mapStructMapper.updateCharacterFromDto(character, characterService.findById(id)));
 
-        if (characterToUpdate.isPresent()) {
-
-            Character characterUpdated = characterService.save(mapStructMapper.updateCharacterFromDto(character, characterToUpdate.get()));
-            return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterUpdated), HttpStatus.OK);
-
-        } else {
-
-            throw new ResourceNotFoundException("No Character with ID : " + id);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.characterToCharacterDto(characterUpdated), HttpStatus.OK);
 
     }
 
@@ -202,23 +139,13 @@ public class CharacterController {
     @GetMapping("{id}/movies")
     public ResponseEntity<List<MovieSlimDto>> getCharacterMovies(@PathVariable("id") Long characterId) {
 
-        Optional<Character> character = characterService.findById(characterId);
-
-        if (character.isPresent()) {
-
-            return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(new ArrayList<>(character.get().getMovies())), HttpStatus.OK);
-
-        } else {
-
-            throw new ResourceNotFoundException("No character with ID: " + characterId);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(new ArrayList<>(characterService.findById(characterId).getMovies())), HttpStatus.OK);
 
     }
 
     @Operation(description = "Given a list of MovieID's, adds all the corresponding movies to the character's movies")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Movies added", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Movies added", content = @Content),
             @ApiResponse(responseCode = "404", description = "No character with that ID have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
@@ -227,26 +154,9 @@ public class CharacterController {
     @PutMapping("{id}/movies")
     public ResponseEntity<?> addMoviesToCharacter(@Validated @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
-        Optional<Character> character = characterService.findById(characterId);
+        characterService.addMovies(characterId, moviesIds.getList());
 
-        if (character.isPresent()) {
-
-            if (characterService.checkMoviesExistence(moviesIds.getList())) {
-
-                characterService.addMovies(characterId, moviesIds.getList());
-                return new ResponseEntity<>(HttpStatus.OK);
-
-            } else {
-
-                throw new ResourceNotFoundException("Make sure all movies you want to add to the character already exist on the server");
-
-            }
-
-        } else {
-
-            throw new ResourceNotFoundException("No character with ID: " + characterId);
-
-        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 
@@ -261,18 +171,9 @@ public class CharacterController {
     @DeleteMapping("{id}/movies")
     public ResponseEntity<?> removeMoviesFromCharacter(@Validated @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
-        Optional<Character> character = characterService.findById(characterId);
+        characterService.removeMovies(characterId, moviesIds.getList());
 
-        if (character.isPresent()) {
-
-            characterService.removeMovies(characterId, moviesIds.getList());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        } else {
-
-            throw new ResourceNotFoundException("No character with ID: " + characterId);
-
-        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 

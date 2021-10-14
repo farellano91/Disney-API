@@ -1,19 +1,18 @@
 package com.alkemy.disneyapi.character;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ICharacterService {
 
-    List<Character> getAllCharacters();
+    List<Character> getAll();
 
-    Optional<Character> findById(Long characterId);
+    Character findById(Long characterId);
 
     List<Character> findByName(String name);
 
     List<Character> findByAge(Integer age);
 
-    void deleteById(Long id);
+    void delete(Long id);
 
     Character save(Character character);
 

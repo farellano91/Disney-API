@@ -1,12 +1,13 @@
 package com.alkemy.disneyapi.character;
 
+import com.alkemy.disneyapi.exception.ResourceNotFoundException;
 import com.alkemy.disneyapi.movie.Movie;
 import com.alkemy.disneyapi.movie.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -18,24 +19,26 @@ public class CharacterService implements ICharacterService {
     private final MovieRepository movieRepository;
 
     @Override
-    public List<Character> getAllCharacters() {
+    public List<Character> getAll() {
 
         return characterRepository.findAll();
 
     }
 
     @Override
-    public Optional<Character> findById(Long characterId) {
+    public Character findById(Long characterId) {
 
-        return characterRepository.findById(characterId);
+        return characterRepository.findById(characterId).orElseThrow(() -> new ResourceNotFoundException("No Character with ID : " + characterId));
 
     }
+
     @Override
     public List<Character> findByName(String name) {
 
         return characterRepository.findByName(name);
 
     }
+
     @Override
     public List<Character> findByAge(Integer age) {
 
@@ -44,9 +47,9 @@ public class CharacterService implements ICharacterService {
     }
 
     @Override
-    public void deleteById(Long id){
+    public void delete(Long id){
 
-        characterRepository.deleteById(id);
+        characterRepository.delete(findById(id));
 
     }
 
@@ -60,7 +63,7 @@ public class CharacterService implements ICharacterService {
     @Override
     public List<Character> findByMovieId(Long idMovie) {
 
-        return characterRepository.findByMovieId(idMovie);
+        return characterRepository.findByMoviesId(idMovie);
 
     }
 
@@ -74,9 +77,17 @@ public class CharacterService implements ICharacterService {
     @Override
     public void addMovies(Long characterId, List<Long> moviesIds) {
 
-        Character character = characterRepository.getById(characterId);
+        Character character = findById(characterId);
 
-        movieRepository.findAllById(moviesIds).forEach(movie -> character.getMovies().add(movie));
+        if (checkMoviesExistence(moviesIds)) {
+
+            movieRepository.findAllById(moviesIds).forEach(movie -> character.getMovies().add(movie));
+
+        } else {
+
+            throw new ResourceNotFoundException("Make sure all movies you want to add to the character already exist on the server");
+
+        }
 
         characterRepository.save(character);
 
@@ -85,7 +96,7 @@ public class CharacterService implements ICharacterService {
     @Override
     public void removeMovies(Long characterId, List<Long> moviesIds) {
 
-        Character character = characterRepository.getById(characterId);
+        Character character = findById(characterId);
 
         character.getMovies().removeIf(movie -> moviesIds.contains(movie.getId()));
 

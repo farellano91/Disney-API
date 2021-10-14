@@ -14,7 +14,7 @@ public class DisneyApiApplication {
 
 /*
 * 1 - Modelado de datos -------> OK
-* 2 - Autenticación -------> TODO
+* 2 - Autenticación -------> OK
 * 3 - Listado de Personajes -------> OK
 * 4 - CRUD de Personajes -------> OK
 * 5 - Detalle de Personaje -------> OK
