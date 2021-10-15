@@ -22,6 +22,8 @@ Alkemy Labs Java Challenge
 
 ![title](/screenshots/title.png)
 
+![auth](/screenshots/auth.png)
+
 ![characters](/screenshots/characters.png)
 
 ![movies](/screenshots/movies.png)
