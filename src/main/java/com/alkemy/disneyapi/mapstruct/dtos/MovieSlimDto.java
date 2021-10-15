@@ -2,7 +2,8 @@ package com.alkemy.disneyapi.mapstruct.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
-import java.util.Date;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -11,6 +12,6 @@ public class MovieSlimDto {
     private Long id;
     private String image;
     private String title;
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
 }
