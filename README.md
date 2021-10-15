@@ -17,3 +17,11 @@ Alkemy Labs Java Challenge
 * Open the console and go to the project folder
 * Run these commands: `mvn clean install` and then `mvn spring-boot:run`
 * Open your web browser and go to http://localhost:8080/swagger-ui.html to see the API docs and play with the endpoints
+
+# Screenshots
+
+![title](/screenshots/title.png)
+
+![characters](/screenshots/characters.png)
+
+![movies](/screenshots/movies.png)
