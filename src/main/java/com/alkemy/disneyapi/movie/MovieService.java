@@ -1,12 +1,14 @@
 package com.alkemy.disneyapi.movie;
 
+import com.alkemy.disneyapi.exception.ResourceNotFoundException;
 import com.alkemy.disneyapi.genre.Genre;
 import com.alkemy.disneyapi.genre.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class MovieService implements IMovieService {
     private final GenreRepository genreRepository;
 
     @Override
-    public List<Movie> getAllMovies() {
+    public List<Movie> getAll() {
 
         return movieRepository.findAll();
 
@@ -42,9 +44,9 @@ public class MovieService implements IMovieService {
     }
 
     @Override
-    public Optional<Movie> findById(Long movieId) {
+    public Movie findById(Long movieId) {
 
-        return movieRepository.findById(movieId);
+        return movieRepository.findById(movieId).orElseThrow(() -> new ResourceNotFoundException("No Movie with ID : " + movieId));
 
     }
 
@@ -56,9 +58,9 @@ public class MovieService implements IMovieService {
     }
 
     @Override
-    public void deleteById(Long id){
+    public void delete(Long id){
 
-        movieRepository.deleteById(id);
+        movieRepository.delete(findById(id));
 
     }
 
@@ -71,25 +73,39 @@ public class MovieService implements IMovieService {
     }
 
     @Override
-    public List<Movie> getByGenreId(Long idGenre) {
+    public List<Movie> findByGenreId(Long idGenre) {
 
-        return movieRepository.findByGenre(idGenre);
+        return movieRepository.findByGenresId(idGenre);
 
     }
 
-    @Override
-    public boolean checkGenresExistence(List<Long> genresIds) {
+    private boolean checkGenresExistence(List<Long> genresIds) {
 
         return genreRepository.findAll().stream().map(Genre::getId).collect(Collectors.toList()).containsAll(genresIds);
 
     }
 
     @Override
+    public Set<Genre> getGenres(Long id) {
+
+        return findById(id).getGenres();
+
+    }
+
+    @Override
     public void addGenres(Long movieId, List<Long> genresIds) {
 
-        Movie movie = movieRepository.getById(movieId);
+        Movie movie = findById(movieId);
 
-        genreRepository.findAllById(genresIds).forEach(genre -> movie.getGenres().add(genre));
+        if (checkGenresExistence(genresIds)) {
+
+            genreRepository.findAllById(genresIds).forEach(genre -> movie.getGenres().add(genre));
+
+        } else {
+
+            throw new ResourceNotFoundException("Make sure all movies you want to add to the character already exist on the server");
+
+        }
 
         movieRepository.save(movie);
 
@@ -98,7 +114,7 @@ public class MovieService implements IMovieService {
     @Override
     public void removeGenres(Long movieId, List<Long> genresIds) {
 
-        Movie movie = movieRepository.getById(movieId);
+        Movie movie = findById(movieId);
 
         movie.getGenres().removeIf(genre -> genresIds.contains(genre.getId()));
 

@@ -34,9 +34,9 @@ public class Movie {
     @ManyToMany(mappedBy = "movies")
     private Set<Character> characters = new HashSet<>();
 
-    @JoinTable(name = "Movie_Genre",
-            joinColumns = @JoinColumn(name = "Movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "Genre_id"))
+    @JoinTable(name = "movie_genre",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
     @ManyToMany
     private Set<Genre> genres = new HashSet<>();
 

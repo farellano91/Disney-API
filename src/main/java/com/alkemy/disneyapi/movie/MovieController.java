@@ -1,7 +1,6 @@
 package com.alkemy.disneyapi.movie;
 
 import com.alkemy.disneyapi.exception.ErrorDetails;
-import com.alkemy.disneyapi.exception.ResourceNotFoundException;
 import com.alkemy.disneyapi.mapstruct.dtos.GenreSlimDto;
 import com.alkemy.disneyapi.mapstruct.dtos.ListOfLongDto;
 import com.alkemy.disneyapi.mapstruct.dtos.MovieDto;
@@ -20,9 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Tag(name = "Movies")
@@ -36,24 +35,13 @@ public class MovieController {
 
     @Operation(description = "Get all movies")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "All movies are shown",content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = MovieSlimDto.class)) }),
-            @ApiResponse(responseCode = "204", description = "No movies to show", content = @Content)
+            @ApiResponse(responseCode = "200", description = "All movies are shown", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = MovieSlimDto.class)) })
     })
     @GetMapping()
     public ResponseEntity<List<MovieSlimDto>> getAllMovies() {
 
-        List<Movie> movies = movieService.getAllMovies();
-
-        if(movies.isEmpty()){
-
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        } else {
-
-            return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(movies), HttpStatus.OK);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.moviesToMovieSlimDtos(movieService.getAll()), HttpStatus.OK);
 
     }
 
@@ -69,12 +57,6 @@ public class MovieController {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        }
-
-        if(movies.isEmpty()){
-
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
         } else {
 
             return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movies), HttpStatus.OK);
@@ -85,7 +67,7 @@ public class MovieController {
 
     @Operation(description = "Find a movie by its ID and shows its details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Movie found",content = {
+            @ApiResponse(responseCode = "200", description = "Movie found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = MovieDto.class)) }),
             @ApiResponse(responseCode = "404", description = "No movie have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
@@ -93,11 +75,7 @@ public class MovieController {
     @GetMapping("/{id}")
     public ResponseEntity<MovieDto> findMovieById(@PathVariable("id") Long movieId) {
 
-        Optional<Movie> movie = movieService.findById(movieId);
-
-        return movie.map(value -> new ResponseEntity<>
-                (mapStructMapper.movieToMovieDto(value), HttpStatus.OK))
-                .orElseThrow(() -> new ResourceNotFoundException("No Movie with ID : " + movieId));
+        return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieService.findById(movieId)), HttpStatus.OK);
 
     }
 
@@ -105,17 +83,7 @@ public class MovieController {
     public ResponseEntity<List<MovieDto>> findMovieByTitle(
             @Parameter(description = "Filter movies by title") @RequestParam(value = "title", required = false) String title) {
 
-        List<Movie> movies = movieService.findByTitle(title);
-
-        if(movies.isEmpty()){
-
-            throw new ResourceNotFoundException("No Movies with Title : " + title);
-
-        } else {
-
-            return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movies), HttpStatus.OK);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movieService.findByTitle(title)), HttpStatus.OK);
 
     }
 
@@ -123,17 +91,7 @@ public class MovieController {
     public ResponseEntity<List<MovieDto>> findMovieByGenre(
             @Parameter(description = "Filter movies by genreID") @RequestParam(value = "genre", required = false) Long genreId) {
 
-        List<Movie> movies = movieService.getByGenreId(genreId);
-
-        if(movies.isEmpty()){
-
-            throw new ResourceNotFoundException("No Movies with GenreId : " + genreId);
-
-        } else {
-
-            return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movies), HttpStatus.OK);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.moviesToMovieDtos(movieService.findByGenreId(genreId)), HttpStatus.OK);
 
     }
 
@@ -146,18 +104,9 @@ public class MovieController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteMovieById(@PathVariable("id") Long id) {
 
-        Optional<Movie> movie = movieService.findById(id);
+        movieService.delete(id);
 
-        if (movie.isPresent()) {
-
-            movieService.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        } else {
-
-            throw new ResourceNotFoundException("No Movie with ID : " + id);
-
-        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 
@@ -172,6 +121,7 @@ public class MovieController {
     public ResponseEntity<MovieDto> saveMovie(@Validated @RequestBody MovieDto movie) {
 
         Movie movieCreated = movieService.save(mapStructMapper.movieDtoToMovie(movie));
+
         return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieCreated), HttpStatus.CREATED);
 
     }
@@ -188,18 +138,9 @@ public class MovieController {
     @PatchMapping("/{id}")
     public ResponseEntity<MovieDto> updateMovie(@Validated @RequestBody MovieDto movie, @PathVariable("id") Long id){
 
-        Optional<Movie> movieToUpdate = movieService.findById(id);
+        Movie movieUpdated = movieService.save(mapStructMapper.updateMovieFromDto(movie, movieService.findById(id)));
 
-        if (movieToUpdate.isPresent()) {
-
-            Movie movieUpdated = movieService.save(mapStructMapper.updateMovieFromDto(movie, movieToUpdate.get()));
-            return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieUpdated), HttpStatus.OK);
-
-        } else {
-
-            throw new ResourceNotFoundException("No Movie with ID : " + id);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.movieToMovieDto(movieUpdated), HttpStatus.OK);
 
     }
 
@@ -213,23 +154,13 @@ public class MovieController {
     @GetMapping("{id}/genres")
     public ResponseEntity<List<GenreSlimDto>> getMovieGenres(@PathVariable("id") Long movieId) {
 
-        Optional<Movie> movie = movieService.findById(movieId);
-
-        if (movie.isPresent()) {
-
-            return new ResponseEntity<>(mapStructMapper.genresToGenreSlimDtos(new ArrayList<>(movie.get().getGenres())), HttpStatus.OK);
-
-        } else {
-
-            throw new ResourceNotFoundException("No movie with ID: " + movieId);
-
-        }
+        return new ResponseEntity<>(mapStructMapper.genresToGenreSlimDtos(new ArrayList<>(movieService.getGenres(movieId))), HttpStatus.OK);
 
     }
 
     @Operation(description = "Given a list of GenreID's, add all the corresponding genres to the movie")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Genres added", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Genres added successfully", content = @Content),
             @ApiResponse(responseCode = "404", description = "No movie with that ID have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
@@ -238,32 +169,15 @@ public class MovieController {
     @PutMapping("{id}/genres")
     public ResponseEntity<?> addGenresToMovie(@Validated @RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
 
-        Optional<Movie> movie = movieService.findById(movieId);
+        movieService.addGenres(movieId, genresIds.getList());
 
-        if (movie.isPresent()) {
-
-            if (movieService.checkGenresExistence(genresIds.getList())) {
-
-                movieService.addGenres(movieId, genresIds.getList());
-                return new ResponseEntity<>(HttpStatus.OK);
-
-            } else {
-
-                throw new ResourceNotFoundException("Make sure all genres you want to add to the movie already exist on the server");
-
-            }
-
-        } else {
-
-            throw new ResourceNotFoundException("No movie with ID: " + movieId);
-
-        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 
     @Operation(description = "Given a list of GenreID's, remove all the corresponding genres from the movie")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Genres removed", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Genres removed successfully", content = @Content),
             @ApiResponse(responseCode = "404", description = "No movie with that ID have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
@@ -272,18 +186,9 @@ public class MovieController {
     @DeleteMapping("{id}/genres")
     public ResponseEntity<?> removeGenresFromMovie(@Validated @RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
 
-        Optional<Movie> movie = movieService.findById(movieId);
+        movieService.removeGenres(movieId, genresIds.getList());
 
-        if (movie.isPresent()) {
-
-            movieService.removeGenres(movieId, genresIds.getList());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        } else {
-
-            throw new ResourceNotFoundException("No movie with ID: " + movieId);
-
-        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 

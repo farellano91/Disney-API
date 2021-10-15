@@ -1,25 +1,27 @@
 package com.alkemy.disneyapi.movie;
 
+import com.alkemy.disneyapi.genre.Genre;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 public interface IMovieService {
 
-    List<Movie> getAllMovies();
+    List<Movie> getAll();
 
     List<Movie> findAllOrderByCreationDate(String order);
 
-    Optional<Movie> findById(Long movieId);
+    Movie findById(Long movieId);
 
     List<Movie> findByTitle(String title);
 
-    void deleteById(Long id);
+    void delete(Long id);
 
     Movie save(Movie movie);
 
-    List<Movie> getByGenreId(Long idGenre);
+    List<Movie> findByGenreId(Long idGenre);
 
-    boolean checkGenresExistence(List<Long> genresIds);
+    Set<Genre> getGenres(Long id);
 
     void addGenres(Long movieId, List<Long> genresIds);
 

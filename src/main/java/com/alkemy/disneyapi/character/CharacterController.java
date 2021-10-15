@@ -35,7 +35,7 @@ public class CharacterController {
 
     @Operation(description = "Gets all characters")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "All characters are shown",content = {
+            @ApiResponse(responseCode = "200", description = "All characters are shown", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterSlimDto.class)) })
     })
     @GetMapping()
@@ -47,7 +47,7 @@ public class CharacterController {
 
     @Operation(description = "Finds a character by his ID and shows his details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Character found",content = {
+            @ApiResponse(responseCode = "200", description = "Character found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterDto.class)) }),
             @ApiResponse(responseCode = "404", description = "No character have been found", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
@@ -97,7 +97,7 @@ public class CharacterController {
 
     @Operation(description = "Saves a character")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Character created",content = {
+            @ApiResponse(responseCode = "201", description = "Character created", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = CharacterDto.class)) }),
             @ApiResponse(responseCode = "400", description = "There have been validation errors", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })

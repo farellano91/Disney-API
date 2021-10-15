@@ -30,9 +30,9 @@ public class Character {
 
     private String history;
 
-    @JoinTable(name = "Character_Movie",
-            joinColumns = @JoinColumn(name = "Character_id"),
-            inverseJoinColumns = @JoinColumn(name = "Movie_id"))
+    @JoinTable(name = "character_movie",
+            joinColumns = @JoinColumn(name = "character_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id"))
     @ManyToMany
     private Set<Movie> movies = new HashSet<>();
 
