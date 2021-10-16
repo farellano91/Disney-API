@@ -5,7 +5,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -58,7 +57,7 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    // handleMethodArgumentNotValid : triggers when @Validated fails
+    // handleMethodArgumentNotValid : triggers when @Valid fails
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
@@ -100,7 +99,7 @@ public class ControllerHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    // handleConstraintViolationException : triggers when @Validated fails
+    // handleConstraintViolationException : triggers when @Valid fails
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity<ErrorDetails> handleConstraintViolationException(ConstraintViolationException ex) {
 

@@ -17,9 +17,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +103,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PostMapping()
-    public ResponseEntity<CharacterDto> saveCharacter(@Validated @RequestBody CharacterDto character) {
+    public ResponseEntity<CharacterDto> saveCharacter(@Valid @RequestBody CharacterDto character) {
 
         Character characterCreated = characterService.save(mapStructMapper.characterDtoToCharacter(character));
 
@@ -121,7 +121,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<CharacterDto> updateCharacter(@Validated @RequestBody CharacterDto character, @PathVariable("id") Long id) {
+    public ResponseEntity<CharacterDto> updateCharacter(@Valid @RequestBody CharacterDto character, @PathVariable("id") Long id) {
 
         Character characterUpdated = characterService.save(mapStructMapper.updateCharacterFromDto(character, characterService.findById(id)));
 
@@ -152,7 +152,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PutMapping("{id}/movies")
-    public ResponseEntity<?> addMoviesToCharacter(@Validated @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
+    public ResponseEntity<?> addMoviesToCharacter(@Valid @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
         characterService.addMovies(characterId, moviesIds.getList());
 
@@ -169,7 +169,7 @@ public class CharacterController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @DeleteMapping("{id}/movies")
-    public ResponseEntity<?> removeMoviesFromCharacter(@Validated @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
+    public ResponseEntity<?> removeMoviesFromCharacter(@Valid @RequestBody ListOfLongDto moviesIds, @PathVariable("id") Long characterId) {
 
         characterService.removeMovies(characterId, moviesIds.getList());
 

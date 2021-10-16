@@ -5,6 +5,7 @@ import com.alkemy.disneyapi.genre.Genre;
 import com.alkemy.disneyapi.mapstruct.dtos.*;
 import com.alkemy.disneyapi.movie.Movie;
 import org.mapstruct.*;
+
 import java.util.List;
 
 @Mapper(componentModel = "spring")

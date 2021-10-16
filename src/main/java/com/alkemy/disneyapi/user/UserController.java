@@ -11,10 +11,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @Tag(name = "Auth")
@@ -29,7 +30,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Email already in use by another user", content = @Content)
     })
     @PostMapping("/auth/register")
-    public ResponseEntity<?> registerUser(@Validated @RequestBody UserDto user) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDto user) {
 
         userService.saveUser(user);
 
@@ -44,7 +45,7 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Unsuccesfull login", content = @Content)
     })
     @PostMapping("/auth/login")
-    public ResponseEntity<LoginResponse> loginUser(@Validated @RequestBody UserDto user) {
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody UserDto user) {
 
         return new ResponseEntity<>(new LoginResponse(userService.logInUser(user)), HttpStatus.OK);
 

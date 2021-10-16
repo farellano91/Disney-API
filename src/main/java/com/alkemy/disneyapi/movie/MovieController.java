@@ -17,9 +17,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +118,7 @@ public class MovieController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PostMapping()
-    public ResponseEntity<MovieDto> saveMovie(@Validated @RequestBody MovieDto movie) {
+    public ResponseEntity<MovieDto> saveMovie(@Valid @RequestBody MovieDto movie) {
 
         Movie movieCreated = movieService.save(mapStructMapper.movieDtoToMovie(movie));
 
@@ -136,7 +136,7 @@ public class MovieController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<MovieDto> updateMovie(@Validated @RequestBody MovieDto movie, @PathVariable("id") Long id){
+    public ResponseEntity<MovieDto> updateMovie(@Valid @RequestBody MovieDto movie, @PathVariable("id") Long id){
 
         Movie movieUpdated = movieService.save(mapStructMapper.updateMovieFromDto(movie, movieService.findById(id)));
 
@@ -167,7 +167,7 @@ public class MovieController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @PutMapping("{id}/genres")
-    public ResponseEntity<?> addGenresToMovie(@Validated @RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
+    public ResponseEntity<?> addGenresToMovie(@Valid @RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
 
         movieService.addGenres(movieId, genresIds.getList());
 
@@ -184,7 +184,7 @@ public class MovieController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) })
     })
     @DeleteMapping("{id}/genres")
-    public ResponseEntity<?> removeGenresFromMovie(@Validated @RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
+    public ResponseEntity<?> removeGenresFromMovie(@Valid @RequestBody ListOfLongDto genresIds, @PathVariable("id") Long movieId) {
 
         movieService.removeGenres(movieId, genresIds.getList());
 
